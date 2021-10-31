@@ -5,9 +5,9 @@
 / /_/ // // /_/ / ___ |   / /___/ / / / /_/ / /_/ /  
 \____/___/\____/_/  |_|   \____/_/ /_/\__,_/\__,_/  
 ```
-<center>
+<p align="center">
 <img src="./chad.wpeb" width=300 alt="giga chad" title="hi">
-</center>
+</p>
 
 ----
 
