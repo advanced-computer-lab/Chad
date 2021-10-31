@@ -7,6 +7,8 @@
 ```
 <center>
 <img src="./chad.wpeb" width=300 alt="giga chad" title="hi">
+</center>
+
 ----
 
 ## Index
