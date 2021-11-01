@@ -13,9 +13,7 @@ dotenv.config();
 
 // init the database
 mongoose
-  .connect(
-    'mongodb+srv://admin:admin@acl.eerqj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
-  )
+  .connect(process.env.DB_URI)
   .then(() => {
     console.log('[LOG] DB CONNECTED SUCCESSFULY');
   })
