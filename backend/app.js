@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 
 // require controllers & routers
-
+const searchRouter = require('./routers/searchRoute');
 // GLOCAL OBJECTS
 
 // init the env variables
@@ -13,7 +13,9 @@ dotenv.config();
 
 // init the database
 mongoose
-  .connect(process.env.DB_URI)
+  .connect(
+    'mongodb+srv://admin:admin@acl.eerqj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+  )
   .then(() => {
     console.log('[LOG] DB CONNECTED SUCCESSFULY');
   })
@@ -30,7 +32,7 @@ app.use(express.json());
 app.use(cors());
 
 // add routes&controllers
-
+app.use(searchRouter);
 // start the server
 app.listen(PORT, () => {
   console.log(`[LOG] app is up and running at http://localhost:${PORT}`);
