@@ -6,7 +6,7 @@ const FlightSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    deprature: {
+    depature: {
       type: Date,
       required: true,
     },
@@ -14,7 +14,7 @@ const FlightSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    depratureLocation: {
+    depatureLocation: {
       type: String,
       required: true,
     },
@@ -29,7 +29,7 @@ const FlightSchema = new mongoose.Schema(
     classInfo: {
       type: [
         {
-          type: String,
+          Type: String,
           start: Number,
           end: Number,
         },
