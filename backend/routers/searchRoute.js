@@ -1,4 +1,4 @@
-const { Router, json } = require('express');
+const { Router } = require('express');
 const Flight = require('../models/flightModel');
 const mongoose = require('mongoose');
 let router = new Router();
