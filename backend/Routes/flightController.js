@@ -62,4 +62,40 @@ router.post('/', (req, res) => {
     });
 });
 
+//patch req to update a flight using an id
+router.patch('/:flightNumber', (req, res) => {
+  Flight.find({ flightNumber: parseInt(req.params.flightNumber) }).then(
+    (data) => {
+      if (data.length == 1) {
+        // if(req.session.role == "admin" && req.session._id == (data[0]).creatorId){
+        Flight.collection
+          .updateOne(
+            { flightNumber: parseInt(req.params.flightNumber) },
+            { $set: req.body }
+          )
+          .then((data) => {
+            res.status(201).send({
+              success: true,
+              updated: 'The flight was updated successfully',
+            });
+          })
+          .catch((err) => {
+            res.status(500).send({ success: false, message: err.message });
+          });
+        // }
+        // else{
+        //   res
+        // .status(401)
+        // .send({ success: false, message: 'You are not authorizer to do such action' });
+        // }
+      } else {
+        res.status(400).send({
+          success: false,
+          message: 'There is no flight with this number',
+        });
+      }
+    }
+  );
+});
+
 module.exports = router;
