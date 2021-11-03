@@ -34,4 +34,32 @@ router.get('/:flightNumber', (req, res) => {
     });
 });
 
+// post req to add a flight
+router.post('/', (req, res) => {
+  Flight.find({ flightNumber: req.body.flightNumber })
+    .then((data) => {
+      if (data.length == 0) {
+        let flight = Flight(req.body);
+        // flight.creatorId = req.session._id;
+        // if(req.session.role == "admin"){
+        Flight.collection.insertOne(flight);
+        res.status(201).send({ success: true, created: data });
+        // }
+        // else{
+        //   res
+        // .status(401)
+        // .send({ success: false, message: 'You are not authorizer to do such action' });
+        // }
+      } else {
+        res.status(400).send({
+          success: false,
+          message: 'There is a flight with this number already created',
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({ success: false, message: err.message });
+    });
+});
+
 module.exports = router;
