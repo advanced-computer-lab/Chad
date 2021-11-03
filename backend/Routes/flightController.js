@@ -98,4 +98,27 @@ router.patch('/:flightNumber', (req, res) => {
   );
 });
 
+//delete req
+router.delete('/:flightNumber', (req, res) => {
+  Flight.find({ flightNumber: parseInt(req.params.flightNumber) }).then(
+    (data) => {
+      // if(req.session.role == "admin" && req.session._id == (data[0]).creatorId){
+      Flight.collection
+        .deleteOne({ flightNumber: parseInt(req.params.flightNumber) })
+        .then((data) => {
+          res.status(200).send(data);
+        })
+        .catch((err) => {
+          res.status(500).send({ success: false, message: err.message });
+        });
+      // }
+      // else{
+      //   res
+      // .status(401)
+      // .send({ success: false, message: 'You are not authorizer to do such action' });
+      // }
+    }
+  );
+});
+
 module.exports = router;
