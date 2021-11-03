@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 const { ADMIN, USER } = require('../constants/userEnum');
 
 const UserSchema = new mongoose.Schema(
@@ -13,6 +14,7 @@ const UserSchema = new mongoose.Schema(
     },
     email: {
       type: String,
+      unique: true,
       require: true,
     },
     phone: {
@@ -27,6 +29,24 @@ const UserSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// some global queries
+
+// this function is to add a use to the db with password hashed
+UserSchema.statics.addUser = async function (user) {
+  user.password = await bcrypt.hash(user.password, 10);
+  return this.create(user);
+};
+
+// check if the login credentials are valid
+UserSchema.statics.checkUser = async function ({ email, password }) {
+  let user = await this.findOne({ email: email });
+  let valid = await bcrypt.compare(password, user.password);
+
+  if (!valid) return null;
+
+  return { ...user._doc, password: 'hi' };
+};
 
 const User = mongoose.model('User', UserSchema);
 module.exports = User;
