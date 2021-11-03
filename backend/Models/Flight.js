@@ -40,13 +40,10 @@ const flightSchema = new Schema(
       type: Map,
       required: true,
     },
-    token: {
-      type: String,
-    },
   },
   { timestamps: true }
 );
 
 const Flight = mongoose.model('Flight', flightSchema);
 
-module.exports.Flight = Flight;
+module.exports = Flight;
