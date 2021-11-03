@@ -49,18 +49,4 @@ const flightSchema = new Schema(
 
 const Flight = mongoose.model('Flight', flightSchema);
 
-async function findx(obj) {
-  try {
-    if (!obj) {
-      const f = await Flight.find();
-    } else {
-      const f = await Flight.find(obj);
-    }
-    return f;
-  } catch (err) {
-    console.log(err);
-  }
-}
-
 module.exports.Flight = Flight;
-module.exports.findx = findx;
