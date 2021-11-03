@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 
 // require controllers & routers
 const authController = require('./controllers/authController');
-const authRouter = require('./routes/authRouter');
+const authRouter = require('./routers/authRouter');
 
 // GLOCAL OBJECTS
 
