@@ -62,4 +62,5 @@ async function findx(obj) {
   }
 }
 
-module.exports = Flight;
+module.exports.Flight = Flight;
+module.exports.findx = findx;
