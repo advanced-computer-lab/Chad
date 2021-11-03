@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 
 // require controllers & routers
-
+const authController = require('./controllers/authController');
 // GLOCAL OBJECTS
 
 // init the env variables
@@ -30,6 +30,7 @@ app.use(express.json());
 app.use(cors());
 
 // add routes&controllers
+app.use(authController);
 
 // start the server
 app.listen(PORT, () => {
