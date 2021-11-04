@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 
 // require controllers & routers
 const flightController = require('./routers/flightController');
+const authController = require('./controllers/authController');
+const authRouter = require('./routers/authRouter');
 
 // GLOCAL OBJECTS
 
@@ -32,6 +34,8 @@ app.use(cors());
 
 // add routes&controllers
 app.use('/flight', flightController);
+app.use(authController);
+app.use(authRouter);
 
 // start the server
 app.listen(PORT, () => {
