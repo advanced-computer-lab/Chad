@@ -9,8 +9,8 @@ router.post('/searchFlights', async (req, res) => {
   const [attributes, page] = formAttributes(req.body.attributes);
   try {
     if (
-      (Object.keys(attributes).length != 0) |
-      ((Object.keys(attributes).length = 0) & (req.userData.role === ADMIN))
+      Object.keys(attributes).length != 0 ||
+      ((Object.keys(attributes).length = 0) && req.userData.role === ADMIN)
     ) {
       let flights = await Flight.find(attributes)
         .skip((page - 1) * 20)
