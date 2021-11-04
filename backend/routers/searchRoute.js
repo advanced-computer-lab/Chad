@@ -1,19 +1,20 @@
 const { Router } = require('express');
 const Flight = require('../models/flightModel');
 const mongoose = require('mongoose');
-const ADMIN = 'ADMIN';
+const { ADMIN } = require('../constants/userEnum');
+
 let router = new Router();
 
 router.post('/search', async (req, res) => {
-  console.log(req.body);
-  const [regexAttributes, page] = Regex(req.body);
-  console.log(regexAttributes);
+  console.log(req.body.attributes);
+  const [regexAttributes, page] = Regex(req.body.attributes);
+  console.log(req.userData);
   try {
     if (Object.keys(regexAttributes).length != 0) {
       let flights = await Flight.find(regexAttributes)
         .skip((page - 1) * 20)
         .limit(20);
-      res.status(200).send({
+      res.status(200).json({
         success: true,
         msg: 'ok',
         Flight: flights,
@@ -22,14 +23,20 @@ router.post('/search', async (req, res) => {
       let flights = await Flight.find(regexAttributes)
         .skip((page - 1) * 20)
         .limit(20);
-      res.status(200).send({
+      res.status(200).json({
         success: true,
         msg: 'ok',
         Flight: flights,
       });
+    } else {
+      res.status(403).json({
+        success: false,
+        msg: 'you are Unauthorized',
+      });
     }
   } catch (err) {
-    res.status(500).send({
+    console.log(err);
+    res.status(500).json({
       success: false,
       msg: 'some db err',
     });
