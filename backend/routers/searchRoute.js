@@ -5,54 +5,61 @@ let router = new Router();
 
 router.post('/search', async (req, res) => {
   console.log(req.body);
-  const attributes = Regex(req.body);
-  console.log(attributes);
-  if (attributes) {
-    try {
-      let flights = await Flight.find(attributes);
+  const [regexAttributes, page] = Regex(req.body);
+  console.log(regexAttributes);
+  try {
+    if (Object.keys(regexAttributes).length != 0) {
+      let flights = await Flight.find(regexAttributes)
+        .skip((page - 1) * 20)
+        .limit(20);
       res.status(200).send({
         success: true,
         msg: 'ok',
         Flight: flights,
       });
-    } catch (err) {
-      res.status(500).send({
-        success: false,
-        msg: 'some db err',
-      });
-    }
-  } else {
-    try {
-      let flights = await Flight.find({});
+    } else {
+      let flights = await Flight.find(regexAttributes)
+        .skip((page - 1) * 20)
+        .limit(20);
       res.status(200).send({
         success: true,
         msg: 'ok',
         Flight: flights,
       });
-    } catch (err) {
-      res.status(500).send({
-        success: false,
-        msg: 'some db err',
-      });
     }
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      msg: 'some db err',
+    });
   }
 });
 
 const Regex = (attributes) => {
   let regexAttributes = {};
-  const idRegex = /id/i;
+  let page = attributes['page'] | 1;
   for (let key in attributes) {
-    if (key.includes('Location')) {
-      regexAttributes[key] = new RegExp(attributes[key], 'i');
-    } else if (idRegex.test(key)) {
-      regexAttributes[key] = mongoose.Types.ObjectId(attributes[key]);
-    } else if (key == 'flightNumber') {
-      regexAttributes[key] = Number(attributes[key]);
-    } else {
-      regexAttributes[key] = Date(attributes[key]);
+    switch (key) {
+      case 'arrivalLocation' | 'depatureLocation':
+        regexAttributes[key] = new RegExp(attributes[key], 'i');
+        break;
+      case '_id' | 'creatorId':
+        regexAttributes[key] = mongoose.Types.ObjectId(attributes[key]);
+        break;
+      case 'flightNumber':
+        regexAttributes[key] = Number(attributes[key]);
+        break;
+      case 'arrival' | 'depature':
+        regexAttributes[key] = Date(attributes[key]);
+        break;
+      case 'classInfo':
+        regexAttributes[key] = [...attributes[key]];
+        break;
+      default:
+        break;
     }
   }
-  return regexAttributes;
+  return [regexAttributes, page];
 };
 
 module.exports = router;
