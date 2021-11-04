@@ -32,7 +32,6 @@ authRouter.post('/auth', async (req, res) => {
       user,
     });
   } catch (err) {
-    console.log(err);
     res.status(500).json({
       success: false,
       msg: 'some db err',
