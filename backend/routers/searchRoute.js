@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const Flight = require('../models/flightModel');
 const mongoose = require('mongoose');
+const ADMIN = 'ADMIN';
 let router = new Router();
 
 router.post('/search', async (req, res) => {
@@ -17,7 +18,7 @@ router.post('/search', async (req, res) => {
         msg: 'ok',
         Flight: flights,
       });
-    } else {
+    } else if (req.userData.role === ADMIN) {
       let flights = await Flight.find(regexAttributes)
         .skip((page - 1) * 20)
         .limit(20);
