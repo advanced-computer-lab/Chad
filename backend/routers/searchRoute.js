@@ -50,7 +50,8 @@ const formAttributes = (attributes) => {
       case 'flightNumber':
         formAttributes[key] = Number(attributes[key]);
         break;
-      case 'arrival' | 'depature':
+      case 'arrival':
+      case 'depature':
         formAttributes[key] = Date(attributes[key]);
         break;
       case 'classInfo':
