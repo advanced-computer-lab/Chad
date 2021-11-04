@@ -1,5 +1,41 @@
+$bar-height: 40px;
+
 *{
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+body, html, #root{
+  min-height: 100vh;
+}
+
+input, button{
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+#root{
+  display: flex;
+  flex-direction: column;
+  background: #F4F4FA;
+
+}
+
+.page{
+  flex-grow: 1;
+  height: calc(100% - #{$bar-height});
+}
+
+.row{
+  display: flex;
+}
+
+.bottom{
+  margin-top: auto;
+}
+
+.clickable:hover{
+  cursor: pointer;
 }

@@ -1,0 +1,19 @@
+.app-bar{
+    background: white;
+    padding: 6px 20px;
+    display: flex;
+    justify-content: space-between;
+    box-shadow: 2px 2px 18px rgba(0, 0, 0, 0.07);
+
+    .app-bar__login-btn{
+        padding: 10px 14px;
+        color: white;
+        background: #FE0094;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+    .app-bar__logo{
+        display: flex;
+        align-items: center;
+    }
+}
