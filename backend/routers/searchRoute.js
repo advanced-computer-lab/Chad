@@ -37,7 +37,7 @@ router.post('/search', async (req, res) => {
 
 const Regex = (attributes) => {
   let regexAttributes = {};
-  let page = attributes['page'] | 1;
+  let page = 1;
   for (let key in attributes) {
     switch (key) {
       case 'arrivalLocation' | 'depatureLocation':
@@ -53,7 +53,10 @@ const Regex = (attributes) => {
         regexAttributes[key] = Date(attributes[key]);
         break;
       case 'classInfo':
-        regexAttributes[key] = [...attributes[key]];
+        regexAttributes[key] = attributes[key];
+        break;
+      case 'page':
+        page = attributes[key];
         break;
       default:
         break;
