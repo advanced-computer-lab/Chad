@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 
 // require controllers & routers
-const flightController = require('./Routes/flightController');
+const flightController = require('./routers/flightController');
 
 // GLOCAL OBJECTS
 

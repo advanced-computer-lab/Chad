@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Flight = require('../Models/Flight');
+const Flight = require('../models/Flight');
 
 //git req to view all the flights
 router.get('/all/:page', (req, res) => {
