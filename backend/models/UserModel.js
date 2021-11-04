@@ -48,5 +48,11 @@ UserSchema.statics.checkUser = async function ({ email, password }) {
   return { ...user._doc, password: 'hi' };
 };
 
+//get user info
+UserSchema.statics.getUserInfo = async function ({ id }) {
+  let user = await this.findOne({ _id: id });
+  return { ...user._doc, password: 'hi' };
+};
+
 const User = mongoose.model('User', UserSchema);
 module.exports = User;
