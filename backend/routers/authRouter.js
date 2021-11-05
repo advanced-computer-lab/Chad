@@ -44,7 +44,7 @@ authRouter.post('/register', async (req, res) => {
   const { user } = req.body;
 
   // override or add the role as the ADMIN can't be created
-  req.role = USER;
+  user.role = USER;
 
   if (!user) {
     res.status(400).json({

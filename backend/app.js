@@ -7,8 +7,11 @@ const mongoose = require('mongoose');
 const searchRouter = require('./routers/searchRouter');
 const authController = require('./controllers/authController');
 const authRouter = require('./routers/authRouter');
+const flightRouter = require('./routers/flightRouter');
 
 // GLOCAL OBJECTS
+const { log } = console;
+
 // init the env variables
 dotenv.config();
 
@@ -16,10 +19,10 @@ dotenv.config();
 mongoose
   .connect(process.env.DB_URI)
   .then(() => {
-    console.log('[LOG] DB CONNECTED SUCCESSFULY');
+    log('[LOG] DB CONNECTED SUCCESSFULY');
   })
   .catch((err) => {
-    console.log('[ERR] ERR WHILE CONNECTED TO THE DB\n', err);
+    log('[ERR] ERR WHILE CONNECTED TO THE DB\n', err);
   });
 
 // init the app
@@ -34,8 +37,9 @@ app.use(cors());
 app.use(authController);
 app.use(authRouter);
 app.use(searchRouter);
+app.use(flightRouter);
 
 // start the server
 app.listen(PORT, () => {
-  console.log(`[LOG] app is up and running at http://localhost:${PORT}`);
+  log(`[LOG] app is up and running at http://localhost:${PORT}`);
 });
