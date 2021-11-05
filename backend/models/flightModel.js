@@ -1,12 +1,20 @@
 const mongoose = require('mongoose');
 
+const {
+  ECONOMY,
+  PREMIUM_ECONOMY,
+  BUSINESS,
+  FIRST_CLASS,
+} = require('../constants/flightEnums');
+
 const FlightSchema = new mongoose.Schema(
   {
     flightNumber: {
-      type: Number,
+      type: String,
       required: true,
+      unique: true,
     },
-    depature: {
+    departure: {
       type: Date,
       required: true,
     },
@@ -14,7 +22,16 @@ const FlightSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    depatureLocation: {
+    numberOfSeats: {
+      type: Number,
+      required: true,
+    },
+    numberOfPepole: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    departureLocation: {
       type: String,
       required: true,
     },
@@ -29,7 +46,11 @@ const FlightSchema = new mongoose.Schema(
     classInfo: {
       type: [
         {
-          Type: String,
+          Type: {
+            type: String,
+            enum: [ECONOMY, PREMIUM_ECONOMY, BUSINESS, FIRST_CLASS],
+            default: ECONOMY,
+          },
           start: Number,
           end: Number,
         },

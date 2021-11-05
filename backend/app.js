@@ -4,7 +4,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 // require controllers & routers
-const searchRouter = require('./routers/searchRoute');
+const searchRouter = require('./routers/searchRouter');
 const authController = require('./controllers/authController');
 const authRouter = require('./routers/authRouter');
 
