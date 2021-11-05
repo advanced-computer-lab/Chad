@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const FlightSchema = new mongoose.Schema(
   {
     flightNumber: {
-      type: Number,
+      type: String,
       required: true,
     },
     depature: {
@@ -12,6 +12,14 @@ const FlightSchema = new mongoose.Schema(
     },
     arrival: {
       type: Date,
+      required: true,
+    },
+    numberOfSeats: {
+      type: Number,
+      required: true,
+    },
+    numberOfPepole: {
+      type: Number,
       required: true,
     },
     depatureLocation: {
