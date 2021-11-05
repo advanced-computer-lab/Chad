@@ -18,7 +18,7 @@ function isPuplic({ url, method }) {
 }
 
 async function authController(req, res, next) {
-  const [valid, data] = await checkToken(req.body.token);
+  const [valid, data] = await checkToken(req.headers.token);
   if (isPuplic(req) || valid) {
     req.userData = data;
     next();
