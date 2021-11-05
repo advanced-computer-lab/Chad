@@ -3,13 +3,12 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
-
 // require controllers & routers
+const searchRouter = require('./routers/searchRouter');
 const authController = require('./controllers/authController');
 const authRouter = require('./routers/authRouter');
 
 // GLOCAL OBJECTS
-
 // init the env variables
 dotenv.config();
 
@@ -34,6 +33,7 @@ app.use(cors());
 // add routes&controllers
 app.use(authController);
 app.use(authRouter);
+app.use(searchRouter);
 
 // start the server
 app.listen(PORT, () => {
