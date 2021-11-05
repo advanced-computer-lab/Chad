@@ -6,7 +6,7 @@
 
 ## Samer Walaa
 
-- [ ] [backend] CRUD Flights By Admin (Based on mentioned criteria in FR)
+- [x] [backend] CRUD Flights By Admin (Based on mentioned criteria in FR)
 - [ ] [frontend] Create add Flight Page For Admin
 
 ## Anhar
@@ -20,4 +20,4 @@
 
 ## Mahmed Nabil
 
-- [ ] [backend] Implement Authentication Module (Admin and User)
+- [x] [backend] Implement Authentication Module (Admin and User)
