@@ -1,8 +1,42 @@
 {
+<<<<<<< HEAD
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "mongoose": "^6.0.12"
+=======
+  "name": "flight-search",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "install": "^0.11.0",
+    "moment": "^2.29.1",
+    "query-string": "^6.1.0",
+    "react": "^16.3.2",
+    "react-bootstrap": "^0.32.1",
+    "react-datepicker": "^1.8.0",
+    "react-dom": "^16.3.2",
+    "react-scripts": "1.1.4",
+    "react-spinners": "^0.3.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+>>>>>>> 8fcf2d65 (anhar)
   }
 }
