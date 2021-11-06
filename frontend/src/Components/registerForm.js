@@ -18,7 +18,6 @@ function Form() {
       age: event.target[3].value,
       mobile: event.target[4].value,
     };
-    console.log(data);
     axios
       .post("http://127.0.0.1:8000/register", data)
       .then((res) => {

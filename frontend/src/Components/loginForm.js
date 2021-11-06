@@ -12,11 +12,9 @@ function Form() {
       email: event.target[0].value,
       password: event.target[1].value,
     };
-    console.log(data);
     axios
       .post("http://127.0.0.1:8000/login", data)
       .then((res) => {
-        console.log(res);
         setEmail("");
         setPassword("");
       })
