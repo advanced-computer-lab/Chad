@@ -1,5 +1,7 @@
+import CreateFlight from "../Pages/CreateFlight";
+
 function App() {
-  return <h1>HI from app</h1>;
+  return <CreateFlight />;
 }
 
 export default App;
