@@ -1,13 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700&family=Poppins:wght@100;200;300;400&display=swap');
+
 $bar-height: 40px;
 
 *{
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
 body, html, #root{
   min-height: 100vh;
+}
+
+h1, .logo{
+  font-family: 'Almarai', sans-serif;
+  font-weight: 700;
 }
 
 input, button{
@@ -32,10 +40,18 @@ input, button{
   display: flex;
 }
 
+.row > * + *{
+  margin-left: 20px;
+}
+
 .bottom{
   margin-top: auto;
 }
 
 .clickable:hover{
   cursor: pointer;
+}
+
+.link_btn{
+  text-decoration: none;
 }

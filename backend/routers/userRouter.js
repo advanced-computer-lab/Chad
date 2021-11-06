@@ -5,7 +5,7 @@ const userRouter = new Router();
 
 userRouter.get('/user-info', async (req, res) => {
   try {
-    let user = await User.getUserInfo(req.userData.id);
+    let user = await User.getUserInfo(req.userData);
     res.status(200).json({
       success: true,
       msg: 'ok',
@@ -19,3 +19,5 @@ userRouter.get('/user-info', async (req, res) => {
     });
   }
 });
+
+module.exports = userRouter;
