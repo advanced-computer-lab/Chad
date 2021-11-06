@@ -3,11 +3,11 @@ import axios from "axios";
 import { useState } from "react";
 
 function Form() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [age, setAge] = useState("");
-  const [mobile, setMobile] = useState("");
+  const [name, setName] = useState("name");
+  const [email, setEmail] = useState("email");
+  const [password, setPassword] = useState("password");
+  const [age, setAge] = useState("age");
+  const [mobile, setMobile] = useState("mobile");
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -23,11 +23,11 @@ function Form() {
       .post("http://127.0.0.1:8000/register", data)
       .then((res) => {
         console.log(res);
-        setName("");
-        setEmail("");
-        setPassword("");
-        setAge("");
-        setMobile("");
+        setName("name");
+        setEmail("email");
+        setPassword("password");
+        setAge("age");
+        setMobile("mobile");
       })
       .catch((err) => {
         console.log("Error in Register !", err);
