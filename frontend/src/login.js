@@ -1,18 +1,14 @@
-import Form from "./Components/Form";
 import React from "react";
 import ReactDOM from "react-dom";
 import "./Styles/index.scss";
+import LoginForm from "../src/Components/loginForm";
 import { BrowserRouter as Router } from "react-router-dom";
-let inputs = [
-  { label: "Username", type: "text", name: "username", required: true },
-  { label: "Password", type: "password", name: "password", required: "true" },
-];
 
 ReactDOM.render(
   <React.StrictMode>
     <Router>
       <>
-        <Form inputsList={inputs} />
+        <LoginForm />
       </>
     </Router>
   </React.StrictMode>,
