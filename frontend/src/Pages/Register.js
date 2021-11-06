@@ -27,7 +27,8 @@ function Register() {
       });
 
       // TODO show err msg
-      if (res.status !== 200) return;
+      const data = await res.json();
+      if (res.status !== 200 || !data.success) return;
 
       // redirect to login
       history.push("/login");
