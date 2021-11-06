@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const searchRouter = require('./routers/searchRouter');
 const authController = require('./controllers/authController');
 const authRouter = require('./routers/authRouter');
+const userRouter = require('./routers/userRouter');
 const flightRouter = require('./routers/flightRouter');
 
 // GLOCAL OBJECTS
@@ -37,6 +38,7 @@ app.use(cors());
 app.use(authController);
 app.use(authRouter);
 app.use(searchRouter);
+app.use(userRouter);
 app.use(flightRouter);
 
 // start the server
