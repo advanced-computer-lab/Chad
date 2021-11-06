@@ -1,79 +1,127 @@
-import React from "react";
-import axios from "axios";
 import { useState } from "react";
+import { useHistory } from "react-router";
+import { registerReq } from "../APIs/AuthAPIs";
+import "../Styles/Components/Register.scss";
 
-function Form() {
-  const [name, setName] = useState("name");
-  const [email, setEmail] = useState("email");
-  const [password, setPassword] = useState("password");
-  const [age, setAge] = useState("age");
-  const [mobile, setMobile] = useState("mobile");
+function Register() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [age, setAge] = useState("");
+  const [mobile, setMobile] = useState("");
 
-  const onSubmit = (event) => {
+  const history = useHistory();
+
+  const isValid = name && email && password && age && mobile;
+
+  const onSubmit = async (event) => {
     event.preventDefault();
-    const data = {
-      name: event.target[0].value,
-      email: event.target[1].value,
-      password: event.target[2].value,
-      age: event.target[3].value,
-      mobile: event.target[4].value,
-    };
-    console.log(data);
-    axios
-      .post("http://127.0.0.1:8000/register", data)
-      .then((res) => {
-        console.log(res);
-        setName("name");
-        setEmail("email");
-        setPassword("password");
-        setAge("age");
-        setMobile("mobile");
-      })
-      .catch((err) => {
-        console.log("Error in Register !", err);
+
+    try {
+      let res = await registerReq({
+        name,
+        email,
+        password,
+        age,
+        mobile,
       });
+
+      // TODO show err msg
+      if (res.status !== 200) return;
+
+      // redirect to login
+      history.push("/login");
+    } catch (err) {
+      //TODO handle errors and show msgs
+    }
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <input
-        name="name"
-        value={name}
-        type="text"
-        onChange={(e) => setName(e.target.value)}
-      ></input>
-
-      <input
-        name="email"
-        value={email}
-        type="text"
-        onChange={(e) => setEmail(e.target.value)}
-      ></input>
-
-      <input
-        name="password"
-        value={password}
-        type="password"
-        onChange={(e) => setPassword(e.target.value)}
-      ></input>
-
-      <input
-        name="age"
-        value={age}
-        type="text"
-        onChange={(e) => setAge(e.target.value)}
-      ></input>
-
-      <input
-        name="mobile"
-        value={mobile}
-        type="text"
-        onChange={(e) => setMobile(e.target.value)}
-      ></input>
-
-      <input type="submit" value="register"></input>
-    </form>
+    <div className="page">
+      <form className="reg-form" onSubmit={onSubmit}>
+        <div className="reg-form__content">
+          <h2 className="reg-form__h2">Register as new User</h2>
+          <div className="reg-form__wrap">
+            <label htmlFor="name" className="reg-form__label">
+              Name
+            </label>
+            <input
+              className="reg-form__input"
+              name="name"
+              id="name"
+              value={name}
+              type="text"
+              onChange={({ target }) => setName(target.value)}
+              required
+            />
+          </div>
+          <div className="reg-form__wrap">
+            <label htmlFor="email" className="reg-form__label">
+              Email
+            </label>
+            <input
+              className="reg-form__input"
+              id="email"
+              name="email"
+              value={email}
+              type="email"
+              onChange={({ target }) => setEmail(target.value)}
+              required
+            />
+          </div>
+          <div className="reg-form__wrap">
+            <label htmlFor="password" className="reg-form__label">
+              Password
+            </label>
+            <input
+              className="reg-form__input"
+              name="password"
+              id="password"
+              value={password}
+              type="password"
+              onChange={({ target }) => setPassword(target.value)}
+              required
+            />
+          </div>
+          <div className="reg-form__wrap">
+            <label htmlFor="age" className="reg-form__label">
+              Age
+            </label>
+            <input
+              className="reg-form__input"
+              name="age"
+              id="age"
+              value={age}
+              type="number"
+              onChange={({ target }) => setAge(target.value)}
+              required
+            />
+          </div>
+          <div className="reg-form__wrap">
+            <label htmlFor="mobile" className="reg-form__label">
+              Mobile
+            </label>
+            <input
+              className="reg-form__input"
+              name="mobile"
+              id="mobile"
+              value={mobile}
+              type="text"
+              onChange={({ target }) => setMobile(target.value)}
+              required
+            />
+          </div>
+          <button
+            className="reg-form__btn clickable"
+            type="submit"
+            disabled={!isValid}
+          >
+            Register
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
 
-export default Form;
+export default Register;
