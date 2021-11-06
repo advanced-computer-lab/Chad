@@ -3,7 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 
 function Form() {
-  const [username, setUserName] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const onSubmit = (event) => {
@@ -17,7 +17,7 @@ function Form() {
       .post("http://127.0.0.1:8000/login", data)
       .then((res) => {
         console.log(res);
-        setUserName("");
+        setEmail("");
         setPassword("");
       })
       .catch((err) => {
@@ -28,10 +28,10 @@ function Form() {
   return (
     <form onSubmit={onSubmit}>
       <input
-        name="username"
-        value={username}
+        name="email"
+        value={email}
         type="text"
-        onChange={(e) => setUserName(e.target.value)}
+        onChange={(e) => setEmail(e.target.value)}
       ></input>
       <input
         name="password"
