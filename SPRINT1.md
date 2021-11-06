@@ -14,7 +14,7 @@
 
 ## Marwan Mohsen
 
-- [ ] [frontend] Implement User Login / signup Page
+- [x] [frontend] Implement User Login / signup Page
 - [ ] [frontend] Create Edit/delete Flights Page for admin
 
 ## Mahmed Nabil
