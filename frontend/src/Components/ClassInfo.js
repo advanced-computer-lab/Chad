@@ -1,15 +1,10 @@
 import { useEffect, useState } from "react";
 import { TYPES } from "../Constants/ClassEnums";
 
-function ClassInfo({ onChange }) {
+function ClassInfo({ data, onChange }) {
   const [number, setNumber] = useState(1);
-  const [info, setInfo] = useState([
-    {
-      Type: TYPES[0],
-      start: 0,
-      end: 0,
-    },
-  ]);
+  const [info, setInfo] = useState(data);
+  const isAvail = number < 4;
 
   useEffect(() => {
     onChange(info);
@@ -24,12 +19,20 @@ function ClassInfo({ onChange }) {
     setNumber(number + 1);
   };
 
+  const removeInfo = (i) => {
+    info.splice(i, 1);
+    setNumber(number - 1);
+    setInfo([...info]);
+  };
+
+  // TODO make remove class btn
+
   return (
     <>
       {[...Array(number)].map((_, i) => (
-        <div key={i}>
+        <div className="row" key={i}>
           <select
-            className="create-flight-form__class-select"
+            className="create-flight-form__select"
             required
             value={info[i].Type}
             onChange={({ target }) => setField(i, "Type", target.value)}
@@ -41,22 +44,33 @@ function ClassInfo({ onChange }) {
             ))}
           </select>
           <input
-            className="create-flight-form__class-start"
+            className="create-flight-form__input"
             type="number"
             required
             value={info[i].start}
             onChange={({ target }) => setField(i, "start", target.value)}
           />
           <input
-            className="create-flight-form__class-end"
+            className="create-flight-form__input"
             type="number"
             required
             value={info[i].end}
             onChange={({ target }) => setField(i, "end", target.value)}
           />
+          <button
+            className="delete-btn clickable"
+            disabled={number < 2}
+            onClick={() => removeInfo(i)}
+          >
+            -
+          </button>
         </div>
       ))}
-      <button className="create-flight-form__add-class" onClick={handleAdd}>
+      <button
+        className="clickable create-flight-form__btn"
+        onClick={handleAdd}
+        disabled={!isAvail}
+      >
         + add classInfo
       </button>
     </>
