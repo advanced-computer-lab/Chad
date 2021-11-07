@@ -10,15 +10,14 @@
 
 ## Anhar
 
-- [ ] [frontend] Create Search Flights for users/Admin
 
 ## Marwan Mohsen
 
 - [x] [frontend] Implement User Login / signup Page
-- [ ] [frontend] Create Edit/delete Flights Page for admin
+- [x] [frontend] Create Edit/delete Flights Page for admin
 
 ## Mahmed Nabil
 
 - [x] [backend] Implement Authentication Module (Admin and User)
-- [ ] [frontend] Create add Flight Page For Admin
-
+- [x] [frontend] Create add Flight Page For Admin
+- [x] [frontend] Create Search Flights for users/Admin
