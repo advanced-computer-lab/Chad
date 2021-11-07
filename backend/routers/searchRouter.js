@@ -20,7 +20,7 @@ router.post('/search-flights', async (req, res) => {
       res.status(200).json({
         success: true,
         msg: 'ok',
-        Flight: flights,
+        flights: flights,
       });
     } else {
       // no one other than the admins are allowed to request all the flights
@@ -33,6 +33,7 @@ router.post('/search-flights', async (req, res) => {
     res.status(500).json({
       success: false,
       msg: 'some db err',
+      err,
     });
   }
 });
@@ -55,6 +56,7 @@ const formAttributes = (attributes) => {
   let dayAfter;
 
   for (let key in attributes) {
+    if (!attributes[key]) continue;
     switch (key) {
       case 'arrivalLocation':
       case 'departureLocation':
