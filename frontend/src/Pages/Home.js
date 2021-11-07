@@ -36,7 +36,6 @@ function Home() {
       if (res.status !== 200) return;
 
       const result = await res.json();
-      console.log(result.flights);
       setFlights(result.flights);
     } catch (err) {
       //TODO handle err and show msg
@@ -52,7 +51,6 @@ function Home() {
       if (res.status !== 200) return;
 
       const result = await res.json();
-      console.log(result.flights);
       setFlights(result.flights);
     } catch (err) {
       //TODO handle err and show msg
