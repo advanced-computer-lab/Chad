@@ -13,19 +13,18 @@ function EditFlight() {
   } = useLocation();
   const history = useHistory();
   const { userData } = useContext(UserContext);
-  console.log(flight);
 
-  const [flightNumber, setFlightNumber] = useState(flight.flightNumber);
-  const [departure, setDeparture] = useState(flight.departure);
-  const [arrival, setArrival] = useState(flight.arrival);
-  const [numberOfSeats, setNumberOfSeats] = useState(flight.numberOfSeats);
+  const [flightNumber, setFlightNumber] = useState(flight?.flightNumber);
+  const [departure, setDeparture] = useState(flight?.departure);
+  const [arrival, setArrival] = useState(flight?.arrival);
+  const [numberOfSeats, setNumberOfSeats] = useState(flight?.numberOfSeats);
   const [departureLocation, setDepartureLocation] = useState(
-    flight.departureLocation
+    flight?.departureLocation
   );
   const [arrivalLocation, setArrivalLocation] = useState(
-    flight.arrivalLocation
+    flight?.arrivalLocation
   );
-  const [classInfo, setClassInfo] = useState(flight.classInfo);
+  const [classInfo, setClassInfo] = useState(flight?.classInfo);
 
   const isValid =
     flightNumber &&

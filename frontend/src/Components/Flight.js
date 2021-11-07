@@ -3,13 +3,15 @@ import { useHistory } from "react-router-dom";
 import { deleteFlight } from "../APIs/FlightAPI";
 import UserContext from "../Context/UserContext";
 
-function Flight({ data }) {
+function Flight({ data, onDelete, idx }) {
   const { userData } = useContext(UserContext);
   const history = useHistory();
 
   const handleDeleteFlight = async () => {
+    if (!window.confirm("are you sure ?")) return;
     try {
       await deleteFlight(data._id);
+      onDelete(idx);
     } catch (err) {
       // TODO
     }

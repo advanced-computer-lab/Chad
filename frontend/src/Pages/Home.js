@@ -152,7 +152,7 @@ function Home() {
           </div>
         </div>
       </form>
-      <FlightList flights={flights} />
+      <FlightList flights={[...flights]} />
     </div>
   );
 }

@@ -39,8 +39,9 @@ export async function deleteFlight(id) {
 
 export async function updateFlight(id, data) {
   return await fetch(`${BASE_URL}/flight/${id}`, {
-    method: "PATCH",
+    method: "PUT",
     headers: {
+      mode: "cors",
       "Content-Type": "application/json",
       token: getSession(),
     },
