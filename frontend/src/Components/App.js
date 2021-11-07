@@ -10,6 +10,7 @@ import Home from "../Pages/Home";
 import Login from "../Pages/Login";
 import Register from "../Pages/Register";
 import Loading from "./Loading";
+import EditFlight from "../Pages/EditFlight";
 
 function App() {
   const [userData, setUserData] = useState({});
@@ -60,6 +61,9 @@ function App() {
             </Route>
             <ProtectedRotute path="/create-flight">
               <CreateFlight />
+            </ProtectedRotute>
+            <ProtectedRotute path="/edit-flight">
+              <EditFlight />
             </ProtectedRotute>
           </Switch>
         </>
