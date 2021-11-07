@@ -59,6 +59,7 @@ function EditFlight() {
         arrivalLocation,
         numberOfSeats,
         classInfo,
+        flightNumber,
       });
 
       // TODO display error msg
@@ -94,7 +95,6 @@ function EditFlight() {
               onChange={({ target }) => setFlightNumber(target.value)}
               maxLength="10"
               pattern="\w+"
-              disabled
             />
           </div>
           <div className="row">
