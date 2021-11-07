@@ -88,7 +88,7 @@ router.post('/flight', async (req, res) => {
 });
 
 //patch req to update a flight using an id
-router.patch('/flight/:flightId', async (req, res) => {
+router.put('/flight/:flightId', async (req, res) => {
   try {
     const _id = req.params.flightId;
     // remove unmodified data

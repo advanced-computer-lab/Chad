@@ -33,20 +33,24 @@ function AppBar() {
               >
                 Logout
               </button>
-              {userData.role === ADMIN && (
-                <Link
-                  to="/create-flight"
-                  className="link_btn app-bar__btn clickable"
-                >
-                  Create Fight
-                </Link>
-              )}
+              {userData.role === ADMIN &&
+                !location.pathname.includes("create-flight") && (
+                  <Link
+                    to="/create-flight"
+                    className="link_btn app-bar__btn clickable"
+                  >
+                    Create Fight
+                  </Link>
+                )}
             </>
           ) : (
             <Link to="/login" className="link_btn app-bar__btn clickable">
               Login
             </Link>
           ))}
+        <Link to="/" className="link_btn app-bar__btn clickable">
+          Home
+        </Link>
       </div>
     </div>
   );
