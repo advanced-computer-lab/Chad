@@ -7,7 +7,7 @@ const Flight = require('../models/flightModel');
 
 // remove the fields that cannot be modified
 const sanatizeData = (data) => {
-  ['flightNumber', 'creatorId', '_id'].forEach((f) => delete data[f]);
+  ['creatorId', '_id'].forEach((f) => delete data[f]);
   return data;
 };
 
