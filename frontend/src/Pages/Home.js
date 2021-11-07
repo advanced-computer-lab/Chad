@@ -13,6 +13,7 @@ function Home() {
   const [to, setTo] = useState("");
   const [departureDate, setDepartureDate] = useState("");
   const [classInfo, setClassInfo] = useState("");
+  const [page, setPage] = useState(1);
 
   const isValid = flightNumber || from || to || departureDate || classInfo;
 
@@ -29,7 +30,7 @@ function Home() {
         classInfo,
         departure: departureDate,
         flightNumber,
-        page: 1,
+        page,
       });
 
       // TODO
@@ -45,7 +46,7 @@ function Home() {
   const handleGetAll = async () => {
     try {
       let res = await getFlights({
-        page: 1,
+        page,
       });
 
       if (res.status !== 200) return;
@@ -131,6 +132,21 @@ function Home() {
                   </option>
                 ))}
               </select>
+            </div>
+          </div>
+          <div className="row">
+            <div className="search-form__input-wrap">
+              <label className="search-form__label" htmlFor="page">
+                Page
+              </label>
+              <input
+                className="search-form__input"
+                id="page"
+                type="number"
+                value={page}
+                min="1"
+                onChange={({ target }) => setPage(Number(target.value))}
+              />
             </div>
           </div>
           <div className="row bottom together">
