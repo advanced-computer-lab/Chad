@@ -1,9 +1,39 @@
 const { Router } = require('express');
 const Flight = require('../models/flightModel');
+const Place = require('../models/PlaceModel');
 const mongoose = require('mongoose');
 const { ADMIN } = require('../constants/userEnum');
 
 let router = new Router();
+
+// it gets an array of flights and replaces the locations ID with name
+// from the places model
+const joinFlightAndPlace = async (flights) => {
+  const map = new Map();
+  const result = [];
+  for (let flight of flights) {
+    let d_id = flight.departureLocation,
+      a_id = flight.arrivalLocation;
+
+    if (!map.has(d_id)) {
+      let place = await Place.findOne({ _id: d_id });
+      map.set(d_id, place.name);
+    }
+
+    if (!map.has(a_id)) {
+      let place = await Place.findOne({ _id: a_id });
+      map.set(a_id, place.name);
+    }
+
+    result.push({
+      ...flight._doc,
+      departureLocation: map.get(d_id),
+      arrivalLocation: map.get(a_id),
+    });
+  }
+
+  return result;
+};
 
 router.post('/search-flights', async (req, res) => {
   const [attributes, page] = formAttributes(req.body.attributes);
@@ -17,6 +47,8 @@ router.post('/search-flights', async (req, res) => {
       let flights = await Flight.find(attributes)
         .skip((page - 1) * 20)
         .limit(20);
+      // join flight and place table
+      flights = await joinFlightAndPlace(flights);
       res.status(200).json({
         success: true,
         msg: 'ok',
@@ -58,19 +90,13 @@ const formAttributes = (attributes) => {
   for (let key in attributes) {
     if (!attributes[key]) continue;
     switch (key) {
-      case 'arrivalLocation':
-      case 'departureLocation':
-        // sanatize the string from any invalid characters
-        attributes[key] = sanatizeText(attributes[key]);
-        // limit the matching string
-        attributes[key] = attributes[key].substr(0, 25);
-        formAttributes[key] = new RegExp(attributes[key], 'i');
-        break;
       case 'flightNumber':
         attributes[key] = sanatizeText(attributes[key]);
         attributes[key] = attributes[key].substr(0, 15);
         formAttributes[key] = new RegExp(attributes[key], 'i');
         break;
+      case 'arrivalLocation':
+      case 'departureLocation':
       case '_id':
       case 'creatorId':
         formAttributes[key] = mongoose.Types.ObjectId(attributes[key]);

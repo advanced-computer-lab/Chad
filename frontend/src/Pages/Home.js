@@ -36,7 +36,9 @@ function Home() {
       });
 
       // TODO
-      if (res.status !== 200) return;
+      if (res.status !== 200) {
+        return;
+      }
 
       const result = await res.json();
       setFlights(result.flights);

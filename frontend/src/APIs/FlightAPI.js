@@ -15,7 +15,8 @@ export async function addFlight(data) {
 }
 
 export async function getFlights(data) {
-  let res = await fetch(`${BASE_URL}/search-flights`, {
+  console.log(data);
+  return await fetch(`${BASE_URL}/search-flights`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -23,8 +24,6 @@ export async function getFlights(data) {
     },
     body: JSON.stringify({ attributes: data }),
   });
-
-  return res;
 }
 
 export async function deleteFlight(id) {

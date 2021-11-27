@@ -22,18 +22,22 @@ function App() {
   useEffect(() => {
     // this is to load the user info between the sessions `reloadings`
     (async () => {
-      if (getSession()) {
-        let res = await UserInfoReq();
+      try {
+        if (getSession()) {
+          let res = await UserInfoReq();
 
-        // TODO show err msg
-        if (res.status !== 200) return;
+          // TODO show err msg
+          if (res.status !== 200) return;
 
-        let jsonData = await res.json();
+          let jsonData = await res.json();
 
-        // TODO show msg
-        if (!jsonData.success) return;
+          // TODO show msg
+          if (!jsonData.success) return;
 
-        setUserData(jsonData.user);
+          setUserData(jsonData.user);
+        }
+      } catch (err) {
+        // TODO handle error
       }
 
       setLoading(false);

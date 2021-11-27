@@ -2,6 +2,7 @@ const express = require('express');
 const { ADMIN } = require('../constants/userEnum');
 const router = express.Router();
 const Flight = require('../models/flightModel');
+const Place = require('../models/PlaceModel');
 
 // helper functions
 
@@ -9,6 +10,35 @@ const Flight = require('../models/flightModel');
 const sanatizeData = (data) => {
   ['creatorId', '_id'].forEach((f) => delete data[f]);
   return data;
+};
+
+// it gets an array of flights and replaces the locations ID with name
+// from the places model
+const joinFlightAndPlace = async (flights) => {
+  const map = new Map();
+  const result = [];
+  for (let flight of flights) {
+    let d_id = flight.departureLocation,
+      a_id = flight.arrivalLocation;
+
+    if (!map.has(d_id)) {
+      let place = await Place.findOne({ _id: d_id });
+      map.set(d_id, place.name);
+    }
+
+    if (!map.has(a_id)) {
+      let place = await Place.findOne({ _id: a_id });
+      map.set(a_id, place.name);
+    }
+
+    result.push({
+      ...flight._doc,
+      departureLocation: map.get(d_id),
+      arrivalLocation: map.get(a_id),
+    });
+  }
+
+  return result;
 };
 
 // use middleware to handle unautherized access
@@ -31,9 +61,13 @@ router.use((req, res, next) => {
 router.get('/flights/:page', async (req, res) => {
   try {
     const page = Number(req.params.page);
-    const flights = await Flight.find()
+    let flights = await Flight.find()
       .skip((page - 1) * 20)
       .limit(20);
+
+    // join flight and place table
+    flights = await joinFlightAndPlace(flights);
+
     res.status(200).json({
       success: true,
       msg: 'ok',
@@ -53,6 +87,9 @@ router.get('/flight/:flightId', async (req, res) => {
   try {
     const _id = req.params.flightId;
     let flight = await Flight.findOne({ _id });
+
+    // join the flight and place models
+    [flight] = await joinFlightAndPlace([flight]);
 
     res.status(200).json({
       success: true,
