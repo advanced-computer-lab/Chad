@@ -32,11 +32,11 @@ const FlightSchema = new mongoose.Schema(
       default: 0,
     },
     departureLocation: {
-      type: String,
+      type: mongoose.Types.ObjectId,
       required: true,
     },
     arrivalLocation: {
-      type: String,
+      type: mongoose.Types.ObjectId,
       required: true,
     },
     creatorId: {
