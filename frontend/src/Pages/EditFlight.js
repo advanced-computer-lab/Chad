@@ -4,6 +4,7 @@ import { useHistory } from "react-router";
 import { ADMIN } from "../Constants/UserEnums";
 import ClassInfo from "../Components/ClassInfo";
 import UserContext from "../Context/UserContext";
+import PlaceContext from "../Context/PlaceContext";
 import "../Styles/Components/CreateFlight.scss";
 import { useLocation } from "react-router";
 
@@ -25,6 +26,7 @@ function EditFlight() {
     flight?.arrivalLocation
   );
   const [classInfo, setClassInfo] = useState(flight?.classInfo);
+  const { places } = useContext(PlaceContext);
 
   const isValid =
     flightNumber &&
@@ -143,7 +145,7 @@ function EditFlight() {
               <label htmlFor="dl" className="create-flight-form__label">
                 Departure Location
               </label>
-              <input
+              <select
                 className="create-flight-form__input"
                 type="text"
                 id="dl"
@@ -152,13 +154,19 @@ function EditFlight() {
                 maxLength="25"
                 pattern="\w+"
                 required
-              />
+              >
+                {places.map(({ _id, name }, i) => (
+                  <option value={_id} key={`place-${i}`}>
+                    {name}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="create-flight-form__wrap">
               <label htmlFor="al" className="create-flight-form__label">
                 Arrival Location
               </label>
-              <input
+              <select
                 className="create-flight-form__input"
                 type="text"
                 id="al"
@@ -167,7 +175,13 @@ function EditFlight() {
                 maxLength="25"
                 pattern="\w+"
                 required
-              />
+              >
+                {places.map(({ _id, name }, i) => (
+                  <option value={_id} key={`place-${i}`}>
+                    {name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
           <h4>Add Classes Info</h4>

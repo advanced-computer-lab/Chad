@@ -14,7 +14,7 @@ const sanatizeData = (data) => {
 // use middleware to handle unautherized access
 router.use((req, res, next) => {
   if (
-    req.userData.role === ADMIN ||
+    req.userData?.role === ADMIN ||
     (!req.url.includes('flights') && req.method === 'GET')
   ) {
     next();

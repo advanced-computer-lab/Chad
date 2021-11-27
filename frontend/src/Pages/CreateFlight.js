@@ -4,6 +4,7 @@ import { useHistory } from "react-router";
 import { ADMIN } from "../Constants/UserEnums";
 import ClassInfo from "../Components/ClassInfo";
 import UserContext from "../Context/UserContext";
+import PlaceContext from "../Context/PlaceContext";
 import "../Styles/Components/CreateFlight.scss";
 import { TYPES } from "../Constants/ClassEnums";
 
@@ -21,6 +22,7 @@ function CreateFlight() {
       end: 0,
     },
   ]);
+  const { places } = useContext(PlaceContext);
 
   const history = useHistory();
   const { userData } = useContext(UserContext);
@@ -144,7 +146,7 @@ function CreateFlight() {
               <label htmlFor="dl" className="create-flight-form__label">
                 Departure Location
               </label>
-              <input
+              <select
                 className="create-flight-form__input"
                 type="text"
                 id="dl"
@@ -153,13 +155,19 @@ function CreateFlight() {
                 maxLength="25"
                 pattern="\w+"
                 required
-              />
+              >
+                {places.map(({ _id, name }, i) => (
+                  <option value={_id} key={`place-${i}`}>
+                    {name}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="create-flight-form__wrap">
               <label htmlFor="al" className="create-flight-form__label">
                 Arrival Location
               </label>
-              <input
+              <select
                 className="create-flight-form__input"
                 type="text"
                 id="al"
@@ -168,7 +176,13 @@ function CreateFlight() {
                 maxLength="25"
                 pattern="\w+"
                 required
-              />
+              >
+                {places.map(({ _id, name }, i) => (
+                  <option value={_id} key={`place-${i}`}>
+                    {name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
           <h4>Add Classes Info</h4>

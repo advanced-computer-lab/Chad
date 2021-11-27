@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import UserContext from "../Context/UserContext";
+import PlaceContext from "../Context/PlaceContext";
 import { ADMIN } from "../Constants/UserEnums";
 import { TYPES } from "../Constants/ClassEnums";
 
@@ -19,6 +20,7 @@ function Home() {
 
   const [flights, setFlights] = useState([]);
   const { userData } = useContext(UserContext);
+  const { places } = useContext(PlaceContext);
 
   const handleSearch = async (event) => {
     event.preventDefault();
@@ -82,25 +84,37 @@ function Home() {
               <label htmlFor="from" className="search-form__label">
                 From
               </label>
-              <input
+              <select
                 id="form"
                 className="search-form__input"
                 type="text"
                 value={from}
                 onChange={({ target }) => setFrom(target.value)}
-              ></input>
+              >
+                {places.map(({ name, _id }, i) => (
+                  <option key={`place-${i}`} value={_id}>
+                    {name}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="search-form__input-wrap">
               <label htmlFor="to" className="search-form__label">
                 To
               </label>
-              <input
+              <select
                 id="to"
                 className="search-form__input"
                 type="text"
                 value={to}
                 onChange={({ target }) => setTo(target.value)}
-              ></input>
+              >
+                {places.map(({ name, _id }, i) => (
+                  <option key={`place-${i}`} value={_id}>
+                    {name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
           <div className="row">
