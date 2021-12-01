@@ -2,8 +2,9 @@ import { useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { deleteFlight } from "../APIs/FlightAPI";
 import UserContext from "../Context/UserContext";
+import "../Styles/Components/Flight.scss";
 
-function Flight({ data, onDelete, idx }) {
+function Flight({ data, onDelete, onSelect, idx, selected, editable }) {
   const { userData } = useContext(UserContext);
   const history = useHistory();
 
@@ -11,7 +12,7 @@ function Flight({ data, onDelete, idx }) {
     if (!window.confirm("are you sure ?")) return;
     try {
       await deleteFlight(data._id);
-      onDelete(idx);
+      onDelete && onDelete(idx);
     } catch (err) {
       // TODO
     }
@@ -24,9 +25,16 @@ function Flight({ data, onDelete, idx }) {
     });
   };
 
+  const addToSelected = () => {
+    onSelect && onSelect(data);
+  };
+
   return (
-    <div className="flight">
-      {userData._id && (
+    <div
+      className={`flight clickable ${selected ? "selected" : ""}`}
+      onClick={addToSelected}
+    >
+      {editable && userData._id && (
         <div className="edit-delete">
           <button className="clickable" onClick={handleDeleteFlight}>
             delete

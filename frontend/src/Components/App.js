@@ -4,8 +4,10 @@ import { getSession } from "../Utils/SessionUtils";
 import { UserInfoReq } from "../APIs/AuthAPIs";
 import ProtectedRotute from "./ProtectedRoute";
 import UserContext from "../Context/UserContext";
+import SelectedFlights from "../Context/SelectedFlights";
 import PlaceContext from "../Context/PlaceContext";
 import CreateFlight from "../Pages/CreateFlight";
+import SelectBag from "./SelectBag";
 import AppBar from "./AppBar";
 import Home from "../Pages/Home";
 import Login from "../Pages/Login";
@@ -18,6 +20,7 @@ function App() {
   const [userData, setUserData] = useState({});
   const [loading, setLoading] = useState(true);
   const [places, setPlaces] = useState([]);
+  const [selectedFlights, setSelectedFlights] = useState([]);
 
   useEffect(() => {
     // this is to load the user info between the sessions `reloadings`
@@ -73,23 +76,31 @@ function App() {
         ) : (
           <>
             <AppBar />
-            <Switch>
-              <Route path="/" exact>
-                <Home />
-              </Route>
-              <Route path="/login">
-                <Login />
-              </Route>
-              <Route path="/register">
-                <Register />
-              </Route>
-              <ProtectedRotute path="/create-flight">
-                <CreateFlight />
-              </ProtectedRotute>
-              <ProtectedRotute path="/edit-flight">
-                <EditFlight />
-              </ProtectedRotute>
-            </Switch>
+            <SelectedFlights.Provider
+              value={{
+                selectedFlights,
+                setSelectedFlights,
+              }}
+            >
+              <Switch>
+                <Route path="/" exact>
+                  <Home />
+                </Route>
+                <Route path="/login">
+                  <Login />
+                </Route>
+                <Route path="/register">
+                  <Register />
+                </Route>
+                <ProtectedRotute path="/create-flight">
+                  <CreateFlight />
+                </ProtectedRotute>
+                <ProtectedRotute path="/edit-flight">
+                  <EditFlight />
+                </ProtectedRotute>
+              </Switch>
+              <SelectBag />
+            </SelectedFlights.Provider>
           </>
         )}
       </UserContext.Provider>

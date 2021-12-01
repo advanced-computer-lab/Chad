@@ -6,50 +6,6 @@
   padding: 20px;
   overflow-x: scroll;
 
-  .flight {
-    position: relative;
-    border: 1px solid gray;
-    border-radius: 5px;
-    min-height: 400px;
-    padding: 20px 10px;
-    display: flex;
-    flex-direction: column;
-    flex: 1 0 300px;
-
-    div + div {
-      margin-top: 10px;
-    }
-
-    .location {
-      justify-content: space-between;
-    }
-
-    .dates {
-      color: rgb(0, 146, 190);
-    }
-
-    .edit-delete {
-      position: absolute;
-      top: 4px;
-      right: 10px;
-
-      button {
-        color: white;
-        background: #fe0094;
-        padding: 2px 4px;
-        border-radius: 2px;
-      }
-
-      button + button {
-        margin-left: 10px;
-      }
-    }
-  }
-
-  .flight + * {
-    margin-left: 20px;
-  }
-
   &::-webkit-scrollbar {
     width: 5px;
   }
