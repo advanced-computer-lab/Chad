@@ -2,48 +2,17 @@ const mongoose = require('mongoose');
 
 const ReservationSchema = new mongoose.Schema(
   {
-    reservationNumber: {
-      type: String,
-      required: true,
-      unique: true,
-    },
+    tickets: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: 'Ticket',
+        required: true,
+      },
+    ],
     userId: {
-      type: String,
+      type: mongoose.Types.ObjectId,
+      ref: 'User',
       required: true,
-    },
-    departureFlightId: {
-      type: String,
-      required: true,
-    },
-    departureNumberOfAdult: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
-    departureNumberOfChildren: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
-    departureAndReturn: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    returnFlightId: {
-      type: String,
-      required: true,
-      default: null,
-    },
-    returnNumberOfAdult: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
-    returnNumberOfChildren: {
-      type: Number,
-      required: true,
-      default: 0,
     },
   },
   { timestamps: true }
