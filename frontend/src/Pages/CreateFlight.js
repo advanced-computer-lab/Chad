@@ -2,24 +2,30 @@ import { useContext, useLayoutEffect, useState } from "react";
 import { addFlight } from "../APIs/FlightAPI";
 import { useHistory } from "react-router";
 import { ADMIN } from "../Constants/UserEnums";
+import { TYPES } from "../Constants/ClassEnums";
 import ClassInfo from "../Components/ClassInfo";
 import UserContext from "../Context/UserContext";
 import PlaceContext from "../Context/PlaceContext";
 import "../Styles/Components/CreateFlight.scss";
-import { TYPES } from "../Constants/ClassEnums";
 
 function CreateFlight() {
   const [flightNumber, setFlightNumber] = useState("");
   const [departure, setDeparture] = useState("");
   const [arrival, setArrival] = useState("");
-  const [numberOfSeats, setNumberOfSeats] = useState("");
+  const [numberOfSeats, setNumberOfSeats] = useState(1);
   const [departureLocation, setDepartureLocation] = useState("");
   const [arrivalLocation, setArrivalLocation] = useState("");
+  const [priceOfExtraWeight, setPriceOfExtraWeight] = useState(0);
   const [classInfo, setClassInfo] = useState([
     {
       Type: TYPES[0],
-      start: 0,
-      end: 0,
+      start: 1,
+      end: 1,
+      priceForAdult: 1,
+      priceForChild: 1,
+      baggageAllowanceForAdult: 1,
+      baggageAllowanceForChild: 1,
+      childrenLimit: 1,
     },
   ]);
   const { places } = useContext(PlaceContext);
@@ -33,6 +39,7 @@ function CreateFlight() {
     arrival &&
     numberOfSeats &&
     departureLocation &&
+    priceOfExtraWeight &&
     arrivalLocation &&
     classInfo;
 
@@ -44,16 +51,28 @@ function CreateFlight() {
       setDepartureLocation,
       setArrivalLocation,
       setNumberOfSeats,
+      priceOfExtraWeight,
     ].forEach((f) => f(""));
 
-    setClassInfo([]);
+    setClassInfo([
+      {
+        Type: TYPES[0],
+        start: 1,
+        end: 1,
+        priceForAdult: 1,
+        priceForChild: 1,
+        baggageAllowanceForAdult: 1,
+        baggageAllowanceForChild: 1,
+        childrenLimit: 1,
+      },
+    ]);
   };
 
   const handleAddFLight = async (event) => {
     event.preventDefault();
 
     try {
-      let res = await addFlight({
+      let flight = {
         flightNumber,
         departure,
         arrival,
@@ -61,11 +80,25 @@ function CreateFlight() {
         arrivalLocation,
         numberOfSeats,
         classInfo,
+        PriceOfExtraWeight: priceOfExtraWeight,
         creatorId: userData._id,
-      });
+      };
+      // add availabel seats in for each class
+      for (let i = 0; i < flight.classInfo.length; i++) {
+        const { start, end, childrenLimit } = flight.classInfo[i];
+        // add the availablenifo to the object
+        flight.classInfo[i].availabelChildrenSeats = childrenLimit;
+        flight.classInfo[i].availabelAdultsSeats = end - start + 1;
+      }
+      // console.log(flight);
+      // return 0;
+      let res = await addFlight(flight);
 
       // TODO display error msg
-      if (res.status !== 200) return;
+      if (res.status !== 200) {
+        console.log(await res.json());
+        return;
+      }
 
       await res.json();
 
@@ -96,7 +129,7 @@ function CreateFlight() {
               value={flightNumber}
               onChange={({ target }) => setFlightNumber(target.value)}
               maxLength="10"
-              pattern="\w+"
+              pattern="(\w|-)+"
               required
             />
           </div>
@@ -137,7 +170,22 @@ function CreateFlight() {
               type="number"
               id="nos"
               value={numberOfSeats}
+              min="1"
               onChange={({ target }) => setNumberOfSeats(target.value)}
+              required
+            />
+          </div>
+          <div className="create-flight-form__wrap">
+            <label htmlFor="poew" className="create-flight-form__label">
+              Price of Extra Weight
+            </label>
+            <input
+              className="create-flight-form__input"
+              type="number"
+              id="poew"
+              min="0"
+              value={priceOfExtraWeight}
+              onChange={({ target }) => setPriceOfExtraWeight(target.value)}
               required
             />
           </div>
@@ -156,6 +204,9 @@ function CreateFlight() {
                 pattern="\w+"
                 required
               >
+                <option value="" disabled hidden>
+                  Choose Your location
+                </option>
                 {places.map(({ _id, name }, i) => (
                   <option value={_id} key={`place-${i}`}>
                     {name}
@@ -177,6 +228,9 @@ function CreateFlight() {
                 pattern="\w+"
                 required
               >
+                <option value="" disabled hidden>
+                  Choose Your Destination
+                </option>
                 {places.map(({ _id, name }, i) => (
                   <option value={_id} key={`place-${i}`}>
                     {name}

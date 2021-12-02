@@ -1,10 +1,11 @@
 .create-flight-form {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  // top: 50%;
+  // left: 50%;
+  // transform: translate(-50%, -50%);
+  width: 700px;
   border-radius: 5px;
   box-shadow: 2px 2px 18px rgba(0, 0, 0, 0.07);
+  box-shadow: -10px 10px #16267a;
 
   &::after {
     content: " ";
@@ -66,25 +67,16 @@
     border-radius: 5px;
   }
 
+  .create-flight-form__btn {
+    margin-top: 10px;
+  }
+
   .create-flight-form__btn[type="submit"] {
     margin: auto;
     margin-top: 10px;
   }
 
   .create-flight-form__btn:disabled {
-    filter: grayscale(1);
-  }
-
-  .delete-btn {
-    color: white;
-    background: #fe0094;
-    width: 30px;
-    height: 30px;
-    font-size: 1.2rem;
-    border-radius: 5px;
-  }
-
-  .delete-btn:disabled {
     filter: grayscale(1);
   }
 }
