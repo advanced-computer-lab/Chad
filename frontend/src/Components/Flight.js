@@ -38,8 +38,8 @@ function Flight({ data, onDelete, idx }) {
       )}
       <h3>{data.flightNumber}</h3>
       <div className="row location">
-        <p> From: {data.departureLocation}</p>
-        <p>To: {data.arrivalLocation}</p>
+        <p> From: {data.departureLocation.name}</p>
+        <p>To: {data.arrivalLocation.name}</p>
       </div>
       <div className="dates">
         <p>{new Date(data.departure).toLocaleString("en-US")}</p>
