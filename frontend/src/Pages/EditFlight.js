@@ -4,6 +4,7 @@ import { useHistory } from "react-router";
 import { ADMIN } from "../Constants/UserEnums";
 import ClassInfo from "../Components/ClassInfo";
 import UserContext from "../Context/UserContext";
+import PlaceContext from "../Context/PlaceContext";
 import "../Styles/Components/CreateFlight.scss";
 import { useLocation } from "react-router";
 
@@ -11,6 +12,7 @@ function EditFlight() {
   const {
     state: { flight },
   } = useLocation();
+  console.log(flight);
   const history = useHistory();
   const { userData } = useContext(UserContext);
 
@@ -25,6 +27,11 @@ function EditFlight() {
     flight?.arrivalLocation
   );
   const [classInfo, setClassInfo] = useState(flight?.classInfo);
+  const [priceOfExtraWeight, setPriceOfExtraWeight] = useState(
+    flight?.PriceOfExtraWeight
+  );
+
+  const { places } = useContext(PlaceContext);
 
   const isValid =
     flightNumber &&
@@ -33,6 +40,7 @@ function EditFlight() {
     numberOfSeats &&
     departureLocation &&
     arrivalLocation &&
+    priceOfExtraWeight &&
     classInfo;
 
   const clearFields = () => {
@@ -52,7 +60,7 @@ function EditFlight() {
     event.preventDefault();
 
     try {
-      let res = await updateFlight(flight._id, {
+      let newData = {
         departure,
         arrival,
         departureLocation,
@@ -60,7 +68,11 @@ function EditFlight() {
         numberOfSeats,
         classInfo,
         flightNumber,
-      });
+        PriceOfExtraWeight: priceOfExtraWeight,
+      };
+      // console.log(newData);
+      // return 0;
+      let res = await updateFlight(flight._id, newData);
 
       // TODO display error msg
       if (res.status !== 200) return;
@@ -138,12 +150,26 @@ function EditFlight() {
               required
             />
           </div>
+          <div className="create-flight-form__wrap">
+            <label htmlFor="poew" className="create-flight-form__label">
+              Price of Extra Weight
+            </label>
+            <input
+              className="create-flight-form__input"
+              type="number"
+              id="poew"
+              min="0"
+              value={priceOfExtraWeight}
+              onChange={({ target }) => setPriceOfExtraWeight(target.value)}
+              required
+            />
+          </div>
           <div className="row">
             <div className="create-flight-form__wrap">
               <label htmlFor="dl" className="create-flight-form__label">
                 Departure Location
               </label>
-              <input
+              <select
                 className="create-flight-form__input"
                 type="text"
                 id="dl"
@@ -152,13 +178,22 @@ function EditFlight() {
                 maxLength="25"
                 pattern="\w+"
                 required
-              />
+              >
+                <option value="" disabled hidden>
+                  Choose Your Location
+                </option>
+                {places.map(({ _id, name }, i) => (
+                  <option value={_id} key={`place-${i}`}>
+                    {name}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="create-flight-form__wrap">
               <label htmlFor="al" className="create-flight-form__label">
                 Arrival Location
               </label>
-              <input
+              <select
                 className="create-flight-form__input"
                 type="text"
                 id="al"
@@ -167,7 +202,16 @@ function EditFlight() {
                 maxLength="25"
                 pattern="\w+"
                 required
-              />
+              >
+                <option value="" disabled hidden>
+                  Choose Your location
+                </option>
+                {places.map(({ _id, name }, i) => (
+                  <option value={_id} key={`place-${i}`}>
+                    {name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
           <h4>Add Classes Info</h4>

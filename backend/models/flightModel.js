@@ -26,21 +26,23 @@ const FlightSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    numberOfPepole: {
+    PriceOfExtraWeight: {
       type: Number,
       required: true,
-      default: 0,
     },
     departureLocation: {
-      type: String,
+      type: mongoose.Types.ObjectId,
+      ref: 'Place',
       required: true,
     },
     arrivalLocation: {
-      type: String,
+      type: mongoose.Types.ObjectId,
+      ref: 'Place',
       required: true,
     },
     creatorId: {
       type: mongoose.Types.ObjectId,
+      ref: 'User',
       required: true,
     },
     classInfo: {
@@ -51,8 +53,46 @@ const FlightSchema = new mongoose.Schema(
             enum: [ECONOMY, PREMIUM_ECONOMY, BUSINESS, FIRST_CLASS],
             default: ECONOMY,
           },
-          start: Number,
-          end: Number,
+          start: {
+            type: Number,
+            required: true,
+          },
+          end: {
+            type: Number,
+            required: true,
+          },
+          priceForAdult: {
+            type: Number,
+            required: true,
+          },
+          priceForChild: {
+            type: Number,
+            required: true,
+          },
+          baggageAllowanceForAdult: {
+            type: Number,
+            required: true,
+          },
+          baggageAllowanceForChild: {
+            type: Number,
+            required: true,
+          },
+          childrenLimit: {
+            type: Number,
+            required: true,
+          },
+          availabelChildrenSeats: {
+            type: Number,
+            required: true,
+          },
+          availabelAdultsSeats: {
+            type: Number,
+            required: true,
+          },
+          reserverdSeats: {
+            type: [Number],
+            default: [],
+          },
         },
       ],
       required: true,

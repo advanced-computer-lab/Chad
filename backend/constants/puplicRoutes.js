@@ -16,4 +16,8 @@ module.exports = [
     path: '/search-flights',
     methods: ['POST'],
   },
+  {
+    path: '/place',
+    methods: ['GET'],
+  },
 ];

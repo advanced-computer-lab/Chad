@@ -1,0 +1,56 @@
+.class-types-list {
+  overflow-y: scroll;
+  height: 377px;
+  padding: 0 5px;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 5px;
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgb(65, 65, 65);
+    border-radius: 5px;
+    width: 5px;
+  }
+}
+
+.class-info {
+  position: relative;
+  margin-top: 20px;
+  border-radius: 5px;
+  padding: 8px;
+  border: 1.4px dashed rgba(0, 0, 0, 0.4);
+
+  .delete-btn {
+    position: absolute;
+    top: 0px;
+    right: 8px;
+    color: white;
+    background: #fe0094;
+    width: 30px;
+    height: 30px;
+    font-size: 1.2rem;
+    border-radius: 5px;
+  }
+
+  .delete-btn:disabled {
+    filter: grayscale(1);
+  }
+
+  .form__label {
+    margin-bottom: 6px;
+  }
+
+  .form__wrap > * {
+    display: block;
+  }
+
+  .row + * {
+    margin-top: 9px;
+  }
+}

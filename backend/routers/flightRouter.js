@@ -3,8 +3,6 @@ const { ADMIN } = require('../constants/userEnum');
 const router = express.Router();
 const Flight = require('../models/flightModel');
 
-// helper functions
-
 // remove the fields that cannot be modified
 const sanatizeData = (data) => {
   ['creatorId', '_id'].forEach((f) => delete data[f]);
@@ -14,7 +12,7 @@ const sanatizeData = (data) => {
 // use middleware to handle unautherized access
 router.use((req, res, next) => {
   if (
-    req.userData.role === ADMIN ||
+    req.userData?.role === ADMIN ||
     (!req.url.includes('flights') && req.method === 'GET')
   ) {
     next();
@@ -31,9 +29,12 @@ router.use((req, res, next) => {
 router.get('/flights/:page', async (req, res) => {
   try {
     const page = Number(req.params.page);
-    const flights = await Flight.find()
+    let flights = await Flight.find()
+      .populate('departureLocation')
+      .populate('arrivalLocation')
       .skip((page - 1) * 20)
       .limit(20);
+
     res.status(200).json({
       success: true,
       msg: 'ok',
@@ -52,7 +53,9 @@ router.get('/flights/:page', async (req, res) => {
 router.get('/flight/:flightId', async (req, res) => {
   try {
     const _id = req.params.flightId;
-    let flight = await Flight.findOne({ _id });
+    let flight = await Flight.findOne({ _id })
+      .populate('departureLocation')
+      .populate('arrivalLocation');
 
     res.status(200).json({
       success: true,

@@ -9,6 +9,7 @@ const authController = require('./controllers/authController');
 const authRouter = require('./routers/authRouter');
 const userRouter = require('./routers/userRouter');
 const flightRouter = require('./routers/flightRouter');
+const placeRouter = require('./routers/placeRouter');
 
 // GLOCAL OBJECTS
 const { log } = console;
@@ -44,6 +45,7 @@ app.use(authController);
 app.use(authRouter);
 app.use(searchRouter);
 app.use(userRouter);
+app.use(placeRouter);
 app.use(flightRouter);
 
 // start the server
