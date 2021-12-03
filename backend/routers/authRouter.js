@@ -26,7 +26,6 @@ authRouter.post('/auth', async (req, res) => {
           {
             id: user._id,
             role: user.role,
-            mail: user.mail,
           },
           process.env.SECRET
         ),

@@ -3,13 +3,14 @@ const router = express.Router();
 const Ticket = require('../models/TicketModel');
 const Reservation = require('../models/ReservationModel');
 const nodemailer = require('nodemailer');
+const User = require('../models/UserModel');
 const { ADMIN, USER } = require('../constants/userEnum');
-
-let testAccount = prepareMail();
 
 const prepareMail = async () => {
   return await nodemailer.createTestAccount();
 };
+
+let testAccount = prepareMail();
 
 let transporter = nodemailer.createTransport({
   host: 'smtp.ethereal.email',
@@ -31,8 +32,8 @@ router.use((req, res, next) => {
   if (
     req.userData?.role === ADMIN ||
     (req.userData?.role === USER &&
-      !req.url.includes('tickeets') &&
-      req.method === 'GET')
+      !req.url.includes('tickets') &&
+      !req.method === 'POST')
   ) {
     next();
     return;
@@ -44,7 +45,7 @@ router.use((req, res, next) => {
   }
 });
 
-//get req to view all the flights
+//get req to view all the tickets
 router.get('/tickets/:page', async (req, res) => {
   try {
     const page = Number(req.params.page);
@@ -52,7 +53,6 @@ router.get('/tickets/:page', async (req, res) => {
       .skip((page - 1) * 20)
       .limit(20);
 
-    // join flight and place table
     res.status(200).json({
       success: true,
       msg: 'ok',
@@ -67,11 +67,15 @@ router.get('/tickets/:page', async (req, res) => {
   }
 });
 
-//get req to view a required flight
+//get req to view a required ticket
 router.get('/ticket/:ticketId', async (req, res) => {
   try {
     const _id = req.params.ticketId;
-    let ticket = await Ticket.find({ _id });
+    let ticket = null;
+
+    if (req.userData.role === ADMIN) ticket = await Ticket.find({ _id });
+    else ticket = await Ticket.find({ _id, userId: req.userData.id });
+
     res.status(200).json({
       success: true,
       msg: 'ok',
@@ -112,6 +116,8 @@ router.delete('/ticket/:ticketId', async (req, res) => {
   try {
     let permission = false;
     let deletedTickets = [];
+    let mail = await User.find({ _id: req.userData.id });
+
     const _id = req.params.ticketId;
     const reservation = await Reservation.find({ tickets: [_id] });
 
@@ -128,7 +134,7 @@ router.delete('/ticket/:ticketId', async (req, res) => {
       deletedTickets.push(await Ticket.findOneAndDelete({ _id }));
       await transporter.sendMail({
         from: '"Chad Airlines" <airlineschad@gmail.com>',
-        to: req.userData.mail,
+        to: mail,
         subject: 'Cancel ticket',
         text: `You canceled your ticket`,
       });
@@ -138,9 +144,10 @@ router.delete('/ticket/:ticketId', async (req, res) => {
       for (let ticket in result.tickets) {
         deletedTickets.push(await Ticket.findOneAndDelete({ _id: ticket }));
       }
+
       await transporter.sendMail({
         from: '"Chad Airlines" <airlineschad@gmail.com>',
-        to: req.userData.mail,
+        to: mail,
         subject: 'Cancel reservation',
         text: `You canceled your reservation to the tickets`,
       });

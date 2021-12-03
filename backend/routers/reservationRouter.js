@@ -2,21 +2,23 @@ const express = require('express');
 const router = express.Router();
 const Reservation = require('../models/ReservationModel');
 const Ticket = require('../models/TicketModel');
+const User = require('../models/UserModel');
 const nodemailer = require('nodemailer');
-
-let testAccount = prepareMail();
+const { USER } = require('../constants/userEnum');
 
 const prepareMail = async () => {
   return await nodemailer.createTestAccount();
 };
 
+let testAccount = prepareMail();
+
 let transporter = nodemailer.createTransport({
   host: 'smtp.ethereal.email',
   port: 587,
-  secure: false, // true for 465, false for other ports
+  secure: false,
   auth: {
-    user: testAccount.user, // generated ethereal user
-    pass: testAccount.pass, // generated ethereal password
+    user: testAccount.user,
+    pass: testAccount.pass,
   },
 });
 
@@ -54,13 +56,41 @@ router.use((req, res, next) => {
   }
 });
 
-router.get('/reservation/:page', async (req, res) => {
+router.get('/reservations/:page', async (req, res) => {
   try {
     let page = Number(req.params.page);
-    let reservation = await Reservation.find({ userId: req.userData.id })
-      .skip((page - 1) * 20)
-      .limit(20);
+    let reservation = null;
+    if (req.userData.role === USER)
+      reservation = await Reservation.find({ userId: req.userData.id })
+        .skip((page - 1) * 20)
+        .limit(20);
+    else
+      reservation = await Reservation.find()
+        .skip((page - 1) * 20)
+        .limit(20);
+    reservation = await joinReservationAndTicket(reservation);
 
+    res.status(200).json({
+      success: true,
+      msg: 'ok',
+      reservation,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      msg: 'some server err',
+      err,
+    });
+  }
+});
+
+router.get('/reservation/:reservationId', async (req, res) => {
+  try {
+    let _id = Number(req.params.page);
+    let reservation = null;
+    if (req.userData.role === USER)
+      reservation = await Reservation.find({ _id, userId: req.userData.id });
+    else reservation = await Reservation.find({ _id });
     reservation = await joinReservationAndTicket(reservation);
 
     res.status(200).json({
@@ -132,7 +162,15 @@ router.put('/reservation/:reservationId', async (req, res) => {
 router.delete('/reservation/:reservationId', async (req, res) => {
   try {
     const _id = req.params.reservationId;
-    const result = await Reservation.findOneAndDelete({ _id });
+    let result = [];
+    let mail = User.findOne();
+
+    if (req.userData.role === USER)
+      result = await Reservation.findOneAndDelete({
+        _id,
+        userId: req.userData.id,
+      });
+    else result = await Reservation.findOneAndDelete({ _id });
 
     for (let ticket in result.tickets) {
       await Ticket.findOneAndDelete({ _id: ticket });
@@ -140,7 +178,7 @@ router.delete('/reservation/:reservationId', async (req, res) => {
 
     await transporter.sendMail({
       from: '"Chad Airlines" <airlineschad@gmail.com>',
-      to: req.userData.mail,
+      to: mail,
       subject: 'Cancel reservation',
       text: `You canceled your reservation to the tickets`,
     });

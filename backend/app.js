@@ -10,7 +10,8 @@ const authRouter = require('./routers/authRouter');
 const userRouter = require('./routers/userRouter');
 const flightRouter = require('./routers/flightRouter');
 const placeRouter = require('./routers/placeRouter');
-
+const ticketRouter = require('./routers/ticketRouter');
+const reservationRouter = require('./routers/reservationRouter');
 // GLOCAL OBJECTS
 const { log } = console;
 
@@ -47,6 +48,8 @@ app.use(searchRouter);
 app.use(userRouter);
 app.use(placeRouter);
 app.use(flightRouter);
+app.use(reservationRouter);
+app.use(ticketRouter);
 
 // start the server
 app.listen(PORT, () => {
