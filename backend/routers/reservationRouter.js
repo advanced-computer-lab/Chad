@@ -80,11 +80,14 @@ router.get('/reservation/:page', async (req, res) => {
 router.post('/reservation', async (req, res) => {
   try {
     const tickets = [];
-    for (let ticket in req.body.tickets) {
-      let result = await Ticket.create(ticket);
-      tickets.push(result._id);
+    for (let reservation in req.body.reservations) {
+      let ticket = reservation.flight[0];
+      for (let seat in reservation.seats) {
+        ticket.seatNumber = seat;
+        let result = await Ticket.create(ticket);
+        tickets.push(result._id);
+      }
     }
-
     let reservation = await Reservation.create({
       tickets,
       userId: req.userData.id,
