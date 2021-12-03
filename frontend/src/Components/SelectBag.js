@@ -7,26 +7,43 @@ function SelectBag() {
   const { selectedFlights } = useContext(SelectedFlights);
   const [show, setShow] = useState(false);
 
-  const handleShow = () => {
+  const handelShow = () => {
     setShow((prev) => !prev);
   };
+  const handelRemove = () => {};
+  const handelBook = () => {};
 
   return (
     <>
       <div
         className={`selected-bag__overlay ${show ? "show-overlay" : ""}`}
-        onClick={handleShow}
+        onClick={handelShow}
       ></div>
       <div className={`select-bag ${show ? "show-bag" : ""}`}>
-        {selectedFlights.map((f, i) => (
-          <Flight key={i} data={f} editable={false} />
-        ))}
+        <div className="row">
+          {selectedFlights.map((f, i) => (
+            <Flight
+              key={i}
+              data={f}
+              editable={false}
+              showX={true}
+              onRemove={handelRemove}
+            />
+          ))}
+        </div>
         {selectedFlights.length ? (
-          <button className="show clickable" onClick={handleShow}>
+          <button className="show clickable" onClick={handelShow}>
             {selectedFlights.length}
           </button>
         ) : (
           ""
+        )}
+        {show && (
+          <div className="row book-div">
+            <button className="clickable book-btn" nClick={handelBook}>
+              Book
+            </button>
+          </div>
         )}
       </div>
     </>

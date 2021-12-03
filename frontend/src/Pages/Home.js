@@ -29,6 +29,8 @@ function Home() {
   const isValid = flightNumber || from || to || departureDate || classInfo;
 
   const [flights, setFlights] = useState([]);
+  const [returnFLights, setReturnFlights] = useState([]);
+
   const { userData } = useContext(UserContext);
   const { places } = useContext(PlaceContext);
 
@@ -57,11 +59,14 @@ function Home() {
 
       // TODO
       if (res.status !== 200) {
+        console.log(await res.json());
         return;
       }
 
       const result = await res.json();
+      console.log(result);
       setFlights(result.flights);
+      setReturnFlights(result.returnFlights);
     } catch (err) {
       //TODO handle err and show msg
     }
@@ -376,6 +381,7 @@ function Home() {
         </div>
       </form>
       <FlightList flights={[...flights]} />
+      {isRoundtrip && <FlightList flights={[...returnFLights]} />}
     </div>
   );
 }

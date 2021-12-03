@@ -1,12 +1,17 @@
 import { useState, useEffect, useContext } from "react";
-import Flight from "./Flight";
 import SelectedFlights from "../Context/SelectedFlights";
+import Flight from "./Flight";
 import "../Styles/Components/FlightList.scss";
+import SelectedFlightContext from "../Context/SelectedFlight";
 
 function FlightList({ flights }) {
   const [, update] = useState(true);
-  const { selectedFlights, setSelectedFlights } = useContext(SelectedFlights);
   const [flightsSet, setFlightsSet] = useState(new Set());
+
+  const { selectedFlights } = useContext(SelectedFlights);
+  const { setSelectedFlight, showSelectFlightPopUp } = useContext(
+    SelectedFlightContext
+  );
 
   useEffect(() => {
     for (let { flightNumber } of selectedFlights) flightsSet.add(flightNumber);
@@ -19,15 +24,8 @@ function FlightList({ flights }) {
   };
 
   const handleOnSelect = (data) => {
-    if (flightsSet.has(data.flightNumber)) {
-      setSelectedFlights((prevState) =>
-        prevState.filter((f) => f.flightNumber !== data.flightNumber)
-      );
-      flightsSet.delete(data.flightNumber);
-    } else {
-      if (selectedFlights?.length === 2) return;
-      setSelectedFlights((prevState) => [...prevState, data]);
-    }
+    setSelectedFlight(data);
+    showSelectFlightPopUp();
   };
 
   return (

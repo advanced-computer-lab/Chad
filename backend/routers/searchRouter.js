@@ -13,7 +13,7 @@ router.post('/search-flights', async (req, res) => {
     returnPage,
     sortAttribute,
     roundtrip,
-    rountTripAttr,
+    roundTripAttr,
   ] = formAttributes(req.body.attributes);
   // when th body is empty we return all the flights paginated
   // note the use of the `?.` conditional chain as the userData is not guaranteed
@@ -29,9 +29,9 @@ router.post('/search-flights', async (req, res) => {
         .skip((page - 1) * 20)
         .limit(20);
 
-      let returnFlights;
+      let returnFlights = [];
       if (roundtrip) {
-        returnFlights = await Flight.find(rountTripAttr)
+        returnFlights = await Flight.find(roundTripAttr)
           .populate('departureLocation')
           .populate('arrivalLocation')
           .sort(sortAttribute)
@@ -142,16 +142,33 @@ const formAttributes = (attributes) => {
     }
   }
   // for the round trip search
-  let rountTripAttr = {};
-  if (roundtrip) {
-    rountTripAttr['arrivalLocation'] = formAttributes['departureLocation'];
-    rountTripAttr['departureLocation'] = formAttributes['arrivalLocation'];
+  let roundTripAttr = {};
+  if (
+    roundtrip &&
+    attributes['arrivalLocation'] &&
+    attributes['departureLocation']
+  ) {
+    roundTripAttr['arrivalLocation'] = formAttributes['departureLocation'];
+    roundTripAttr['departureLocation'] = formAttributes['arrivalLocation'];
     dayAfter = addOneDay(attributes['roundDate']);
-    rountTripAttr['departure'] = {
-      $gte: new Date(attributes['roundDate']),
-      $lt: dayAfter,
-    };
-    rountTripAttr = { ...formAttributes, ...rountTripAttr };
+    if (attributes['roundDate'])
+      roundTripAttr['departure'] = {
+        $gte: new Date(attributes['roundDate']),
+        $lt: dayAfter,
+      };
+    else if (attributes['departure'])
+      roundTripAttr['departure'] = {
+        $gt: new Date(attributes['departure']),
+      };
+    // merge the common attributes
+    roundTripAttr = { ...formAttributes, ...roundTripAttr };
+
+    // remove from the roundTripAttr
+    [
+      'arrival',
+      'flightNumber',
+      !(attributes['roundDate'] || attributes['departure']) && 'departure',
+    ].forEach((a) => delete roundTripAttr[a]);
   }
 
   return [
@@ -160,7 +177,7 @@ const formAttributes = (attributes) => {
     returnPage,
     sortAttribute,
     roundtrip,
-    rountTripAttr,
+    roundTripAttr,
   ];
 };
 
