@@ -26,12 +26,13 @@ userRouter.get('/user-info', async (req, res) => {
   }
 });
 
-userRouter.put('/user/:userId', async (req, res) => {
+userRouter.put('/user', async (req, res) => {
   try {
-    const _id = req.params.userId;
+    let user = await User.getUserInfo(req.userData);
+    const _id = user._id;
     // remove unmodified data
     const newData = sanatizeData(req.body);
-    const user = await User.updateOne({ _id }, { $set: newData });
+    user = await User.updateOne({ _id }, { $set: newData });
 
     res.status(200).json({
       success: true,
