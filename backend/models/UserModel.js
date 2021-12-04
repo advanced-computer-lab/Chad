@@ -50,6 +50,7 @@ UserSchema.statics.checkUser = async function ({ email, password }) {
 
 //get user info
 UserSchema.statics.getUserInfo = async function ({ id }) {
+  console.log(id);
   let user = await this.findOne({ _id: id });
   return { ...user._doc, password: 'hi' };
 };
