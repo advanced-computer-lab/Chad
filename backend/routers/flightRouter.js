@@ -44,6 +44,7 @@ const joinFlightAndPlace = async (flights) => {
 // use middleware to handle unautherized access
 router.use((req, res, next) => {
   if (
+    !req.url.includes('flight') ||
     req.userData?.role === ADMIN ||
     (!req.url.includes('flights') && req.method === 'GET')
   ) {

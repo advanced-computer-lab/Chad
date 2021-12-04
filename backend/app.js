@@ -12,6 +12,7 @@ const flightRouter = require('./routers/flightRouter');
 const placeRouter = require('./routers/placeRouter');
 const ticketRouter = require('./routers/ticketRouter');
 const reservationRouter = require('./routers/reservationRouter');
+
 // GLOCAL OBJECTS
 const { log } = console;
 
