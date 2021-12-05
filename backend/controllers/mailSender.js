@@ -1,5 +1,8 @@
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
+const { config } = require('dotenv');
+
+config();
 
 const oAuth2Client = new google.auth.OAuth2(
   process.env.CLIENT_ID,
@@ -19,7 +22,7 @@ const sendMail = async (mail, subject, text) => {
       },
       auth: {
         type: process.env.AUTH_TYPE,
-        user: process.env.USER,
+        user: process.env.USER_M,
         clientId: process.env.CLIENT_ID,
         clientSecret: process.env.CLIENT_SECRET,
         refreshToken: process.env.REFRESH_TOKEN,
@@ -28,7 +31,7 @@ const sendMail = async (mail, subject, text) => {
     });
 
     const Info = await transport.sendMail({
-      from: process.env.USER,
+      from: process.env.USER_M,
       to: mail,
       subject,
       text,
