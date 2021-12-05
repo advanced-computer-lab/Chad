@@ -28,11 +28,10 @@ userRouter.get('/user-info', async (req, res) => {
 
 userRouter.put('/user', async (req, res) => {
   try {
-    let user = await User.getUserInfo(req.userData);
-    const _id = user._id;
-    // remove unmodified data
+    const _id = req.userData.id;
+    // remove unmodifiable data
     const newData = sanatizeData(req.body);
-    user = await User.updateOne({ _id }, { $set: newData });
+    const user = await User.updateOne({ _id }, { $set: newData });
 
     res.status(200).json({
       success: true,
