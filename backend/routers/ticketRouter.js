@@ -92,38 +92,60 @@ router.delete('/ticket/:ticketId', async (req, res) => {
     let { email } = await User.findOne({ _id: req.userData.id });
 
     const _id = req.params.ticketId;
+    const { flightNumber } = await Ticket.findById(_id);
     let reservation = null;
-    if (req.userData.role === ADMIN)
+
+    if (req.userData.role === ADMIN) {
       reservation = await Reservation.findOne({ tickets: _id });
-    else
+    } else {
       reservation = await Reservation.findOne({
         userId: req.userData.id,
         tickets: _id,
       });
+    }
+
     if (reservation) {
       for (let ticketId of reservation.tickets) {
-        if (ticketId != _id) {
-          let ticket = await Ticket.findOne({ _id: ticketId });
-          if (!ticket.isChild) {
-            permission = true;
-          }
+        const ticket = await Ticket.findOne({ _id: ticketId, flightNumber });
+        if (ticketId != _id && ticket && !ticket?.isChild) {
+          permission = true;
         }
       }
 
       if (permission) {
         deletedTickets.push(await Ticket.findOneAndDelete({ _id }));
+        //geting the difference between the original and deleted arrays which is the remaining tickets
+        const tickets = reservation.tickets.filter(
+          (x) => !deletedTickets.includes(x)
+        );
+        // to reset the array of tickets
+        await Reservation.updateOne({ reservation }, { tickets });
         await sendMail(email, 'Cancel ticket', `You canceled your ticket`);
       } else {
-        const result = await Reservation.findOneAndDelete(reservation);
-        for (let ticket of result.tickets) {
-          deletedTickets.push(await Ticket.findOneAndDelete({ _id: ticket }));
+        for (let ticketId of reservation.tickets) {
+          deletedTickets.push(
+            await Ticket.findOneAndDelete({ _id: ticketId, flightNumber })
+          );
         }
 
-        await sendMail(
-          email,
-          'Cancel reservation',
-          `You canceled your reservation to the tickets`
-        );
+        if (reservation.tickets.length === deletedTickets.length) {
+          await Reservation.findOneAndDelete(reservation);
+          await sendMail(
+            email,
+            'Cancel reservation',
+            `You canceled your reservation to the tickets of the flight number ${flightNumber}`
+          );
+        } else {
+          const tickets = reservation.tickets.filter(
+            (x) => !deletedTickets.includes(x)
+          );
+          await Reservation.updateOne({ reservation }, { tickets });
+          await sendMail(
+            email,
+            'Cancel flight tickets',
+            `You canceled the tickets of the flight ${flightNumber}`
+          );
+        }
       }
     }
     res.status(200).json({
