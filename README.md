@@ -16,6 +16,7 @@
 - [Add env files](#add-env-files)
 - [Important Notes](#important-notes)
 - [Sprint 1 Tasks distribution & progress](SPRINT1.md)
+- [Sprint 2 Tasks distribution & progress](SPRINT2.md)
 
 ## Init the enviroment
 1- clone from the `main` branch.
