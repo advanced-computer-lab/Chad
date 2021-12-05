@@ -20,6 +20,29 @@
     }
   }
 
+  form {
+    width: 100%;
+    position: relative;
+
+    .profile__update-btn {
+      position: absolute;
+      top: 0;
+      right: 0;
+      color: white;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 4px 8px;
+      border-radius: 5px;
+      background-color: rgb(31, 148, 31);
+      transition: transform 0.2s ease;
+
+      &:hover {
+        transform: scale(1.03);
+        box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+
   .profile__info {
     padding: 34px;
   }
@@ -34,6 +57,19 @@
     border-radius: 5px;
     font-size: 16px;
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .input__wrap:hover .edit-btn {
+    display: block;
+  }
+
+  .edit-btn {
+    color: white;
+    padding: 1px 17px;
+    letter-spacing: 1px;
+    border-radius: 5px;
+    background-color: royalblue;
+    display: none;
   }
 
   .profile__role {

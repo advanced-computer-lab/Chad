@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
-import { getUserInfo } from "../APIs/UserAPI";
+import { ADMIN } from "../Constants/UserEnums";
+import { getUserInfo, updateUserInfo } from "../APIs/UserAPI";
 import Loading from "../Components/Loading";
 import Paging from "../Components/Paging";
-import { ADMIN } from "../Constants/UserEnums";
 import ToastContext from "../Context/ToastContext";
 import "../Styles/Components/Profile.scss";
 
@@ -11,6 +11,7 @@ function Profile() {
   const [loadingReservations, setLoadingReservations] = useState(false);
   const [editName, setEditName] = useState(false);
   const [editEmail, setEditEmail] = useState(false);
+  const [changed, setChanged] = useState(false);
   const [reservations, setReservations] = useState([]);
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState(1);
@@ -62,10 +63,44 @@ function Profile() {
 
   useEffect(() => {
     //TODO get next pages
+    (async () => {})();
   }, [page, maxPage]);
 
   // TODO handle delete reservation
   const handleCancelReservations = (id) => {};
+
+  const handleUpdate = async (event) => {
+    event.preventDefault();
+    try {
+      setLoading(true);
+      let res = await updateUserInfo({
+        name,
+        email,
+      });
+      if (res.status !== 200) {
+        setLoading(false);
+        addToasts({
+          type: "danger",
+          body: "faild to update user",
+        });
+        return;
+      }
+      setLoading(false);
+      addToasts({
+        type: "success",
+        body: "data updated successfully",
+      });
+      setChanged(false);
+      setEditEmail(false);
+      setEditName(false);
+    } catch (err) {
+      setLoading(false);
+      addToasts({
+        type: "danger",
+        body: "unexpected error",
+      });
+    }
+  };
 
   return (
     <div className="profile" style={{ position: "relative" }}>
@@ -73,28 +108,59 @@ function Profile() {
         <Loading />
       ) : (
         <>
-          <div className="row">
+          <form className="row" onSubmit={handleUpdate} required>
             <div className="img-holder">
               <div title="img holder" className="img" />
             </div>
             <div className="profile__info">
-              <input
-                className="profile__name d-block"
-                value={name}
-                title="username"
-                disabled={!editName}
-                onClick={({ target }) => setName(target.value)}
-              />
-              <input
-                className="profile__email d-block"
-                value={email}
-                title="email"
-                disabled={!editEmail}
-                onClick={({ target }) => setEmail(target.value)}
-              />
+              <div className="row input__wrap">
+                <input
+                  className="profile__name d-block"
+                  title="username"
+                  type="text"
+                  value={name}
+                  required
+                  disabled={!editName}
+                  onChange={({ target }) => {
+                    setChanged(true);
+                    setName(target.value);
+                  }}
+                />
+                <button
+                  type="button"
+                  className="edit-btn clickable"
+                  onClick={() => setEditName(true)}
+                >
+                  edit
+                </button>
+              </div>
+              <div className="row input__wrap">
+                <input
+                  className="profile__email d-block"
+                  title="email"
+                  type="email"
+                  value={email}
+                  disabled={!editEmail}
+                  required
+                  onChange={({ target }) => {
+                    setChanged(true);
+                    setEmail(target.value);
+                  }}
+                />
+                <button
+                  type="button"
+                  className="edit-btn clickable"
+                  onClick={() => setEditEmail(true)}
+                >
+                  edit
+                </button>
+              </div>
               {role === ADMIN ? <p className="profile__role">{role}</p> : null}
             </div>
-          </div>
+            {changed && (
+              <button className="profile__update-btn clickable">UPDATE</button>
+            )}
+          </form>
           <div className="" style={{ marginTop: "40px" }}>
             <h3>Reservations</h3>
             <div className="reservation-list">
