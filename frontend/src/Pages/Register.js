@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useHistory } from "react-router";
 import { registerReq } from "../APIs/AuthAPIs";
+import { ToastContext } from "../Context/ToastContext";
 import "../Styles/Components/Register.scss";
 
 function Register() {
@@ -9,6 +10,8 @@ function Register() {
   const [password, setPassword] = useState("");
   const [age, setAge] = useState("");
   const [mobile, setMobile] = useState("");
+
+  const { addToasts } = useContext(ToastContext);
 
   const history = useHistory();
 
@@ -26,14 +29,22 @@ function Register() {
         mobile,
       });
 
-      // TODO show err msg
       const data = await res.json();
-      if (res.status !== 200 || !data.success) return;
+      if (res.status !== 200 || !data.success) {
+        addToasts({
+          body: "cannot create user please change the email",
+          type: "danger",
+        });
+        return;
+      }
 
       // redirect to login
       history.push("/login");
     } catch (err) {
-      //TODO handle errors and show msgs
+      addToasts({
+        body: "unexpected error",
+        type: "danger",
+      });
     }
   };
 

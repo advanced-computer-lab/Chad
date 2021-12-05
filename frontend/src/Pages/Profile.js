@@ -49,7 +49,6 @@ function Profile() {
         setEmail(data.user.email);
         setRole(data.user.role);
 
-        // TODO GET THE RESERVATIONS
         res = await getReservations(page);
 
         if (res.status !== 200) {

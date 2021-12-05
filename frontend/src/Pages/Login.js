@@ -1,8 +1,9 @@
 import { useContext, useState } from "react";
 import { loginReq } from "../APIs/AuthAPIs";
 import { saveSession } from "../Utils/SessionUtils";
-import UserContext from "../Context/UserContext";
 import { useHistory } from "react-router";
+import UserContext from "../Context/UserContext";
+import ToastContext from "../Context/ToastContext";
 import "../Styles/Components/Login.scss";
 
 function Login() {
@@ -10,6 +11,8 @@ function Login() {
   const [password, setPassword] = useState("");
 
   const { setUserData } = useContext(UserContext);
+  const { addToasts } = useContext(ToastContext);
+
   const history = useHistory();
 
   const isValid = email && password;
@@ -23,13 +26,28 @@ function Login() {
         password,
       });
 
-      // TODO display err msg
-      if (res.status !== 200) return;
+      if (res.status !== 200) {
+        addToasts({
+          body: "invalid usermail or password",
+          type: "danger",
+        });
+        return;
+      }
 
       let jsonData = await res.json();
 
-      // TODO display msg
-      if (!jsonData.success) return;
+      if (!jsonData.success) {
+        addToasts({
+          body: "invalid usermail or password",
+          type: "danger",
+        });
+        return;
+      }
+
+      addToasts({
+        body: "login successfull",
+        type: "success",
+      });
 
       // save the token to the session
       saveSession(jsonData.token);
@@ -40,7 +58,10 @@ function Login() {
       // redirect to home
       history.push("/");
     } catch (err) {
-      // TODO hanle errors and show msgs
+      addToasts({
+        body: "unexpected error",
+        type: "danger",
+      });
     }
   };
 

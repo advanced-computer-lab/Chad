@@ -5,6 +5,7 @@ import { ADMIN } from "../Constants/UserEnums";
 import ClassInfo from "../Components/ClassInfo";
 import UserContext from "../Context/UserContext";
 import PlaceContext from "../Context/PlaceContext";
+import ToastContext from "../Context/ToastContext";
 import "../Styles/Components/CreateFlight.scss";
 import { useLocation } from "react-router";
 
@@ -15,6 +16,7 @@ function EditFlight() {
   console.log(flight);
   const history = useHistory();
   const { userData } = useContext(UserContext);
+  const { addToasts } = useContext(ToastContext);
 
   const [flightNumber, setFlightNumber] = useState(flight?.flightNumber);
   const [departure, setDeparture] = useState(flight?.departure);
@@ -74,14 +76,26 @@ function EditFlight() {
       // return 0;
       let res = await updateFlight(flight._id, newData);
 
-      // TODO display error msg
-      if (res.status !== 200) return;
+      if (res.status !== 200) {
+        addToasts({
+          type: "danger",
+          body: "edit flight faild",
+        });
+        return;
+      }
 
       await res.json();
+      addToasts({
+        type: "success",
+        body: "flight edited successfully",
+      });
 
       clearFields();
     } catch (err) {
-      // TODO handle err and show msgs
+      addToasts({
+        type: "danger",
+        body: "unexpected error",
+      });
     }
   };
 
