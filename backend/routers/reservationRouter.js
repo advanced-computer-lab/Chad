@@ -27,6 +27,20 @@ router.get('/reservations/:page', async (req, res) => {
       }).countDocuments();
       reservations = await Reservation.find({ userId: req.userData.id })
         .populate('tickets')
+        .populate({
+          path: 'tickets',
+          populate: {
+            path: 'departureLocation',
+            model: 'Place',
+          },
+        })
+        .populate({
+          path: 'tickets',
+          populate: {
+            path: 'arrivalLocation',
+            model: 'Place',
+          },
+        })
         .skip((page - 1) * 20)
         .limit(20);
     } else {
@@ -61,7 +75,23 @@ router.get('/reservation/:reservationId', async (req, res) => {
         _id,
         userId: req.userData.id,
       }).populate('Ticket');
-    else reservation = await Reservation.find({ _id }).populate('Ticket');
+    else
+      reservation = await Reservation.find({ _id })
+        .populate('tickets')
+        .populate({
+          path: 'tickets',
+          populate: {
+            path: 'departureLocation',
+            model: 'Place',
+          },
+        })
+        .populate({
+          path: 'tickets',
+          populate: {
+            path: 'arrivalLocation',
+            model: 'Place',
+          },
+        });
 
     res.status(200).json({
       success: true,

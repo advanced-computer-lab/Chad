@@ -268,6 +268,14 @@ function Profile() {
                               <span>Arrival:</span>
                               {new Date(t.arrival).toLocaleString("en-US")}
                             </h3>
+                            <h3 className="ticket__number">
+                              <span>Dept:</span>
+                              {t.departureLocation.name}
+                            </h3>
+                            <h3 className="ticket__number">
+                              <span>Arrival:</span>
+                              {t.arrivalLocation.name}
+                            </h3>
                             <h3
                               className="ticket__number"
                               style={{ textTransform: "uppercase" }}
