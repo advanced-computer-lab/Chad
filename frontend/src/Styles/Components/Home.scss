@@ -3,10 +3,7 @@
   position: relative;
 
   border-radius: 5px;
-  box-shadow: 2px 2px 18px rgba(0, 0, 0, 0.07);
-
-  box-shadow: -10px 10px 0px #16267a;
-
+  box-shadow: -10px 10px 0px #16267a, 2px 2px 18px rgba(0, 0, 0, 0.07);
   .search-form__content {
     background: white;
     width: 100%;
@@ -61,5 +58,9 @@
 
   .row.together > * + * {
     margin-left: 40px;
+  }
+
+  .number {
+    width: 100px;
   }
 }

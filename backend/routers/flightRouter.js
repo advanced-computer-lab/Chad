@@ -30,6 +30,8 @@ router.use((req, res, next) => {
 router.get('/flights/:page', async (req, res) => {
   try {
     const page = Number(req.params.page);
+
+    let numberOflights = await Flight.find({}).countDocuments();
     let flights = await Flight.find()
       .populate('departureLocation')
       .populate('arrivalLocation')
@@ -40,6 +42,7 @@ router.get('/flights/:page', async (req, res) => {
       success: true,
       msg: 'ok',
       flights,
+      maxPages: Math.ceil(numberOflights / 20),
     });
   } catch (err) {
     res.status(500).json({

@@ -4,6 +4,7 @@ const Ticket = require('../models/TicketModel');
 const Reservation = require('../models/ReservationModel');
 const sendMail = require('../controllers/mailSender');
 const User = require('../models/UserModel');
+const Flight = require('../models/flightModel');
 const { ADMIN } = require('../constants/userEnum');
 
 //TODO : reimplement sanatizeData
@@ -113,40 +114,73 @@ router.delete('/ticket/:ticketId', async (req, res) => {
       }
 
       if (permission) {
-        deletedTickets.push(await Ticket.findOneAndDelete({ _id }));
+        let _ticket = await Ticket.findOneAndDelete({ _id });
+        deletedTickets.push(_ticket);
         //geting the difference between the original and deleted arrays which is the remaining tickets
-        const tickets = reservation.tickets.filter(
-          (x) => !deletedTickets.includes(x)
-        );
+        const tickets = reservation.tickets.filter((t) => t !== _ticket._id);
+        let _flight = await Flight.findOne({
+          flightNumber: _ticket.flightNumber,
+        });
+
+        let _idx = 0;
+        for (let i = 0; i < _flight.classInfo.length; i++)
+          if (_flight.classInfo[i].Type === _ticket.classType) _idx = i;
+        _flight.classInfo[_idx].reserverdSeats = _flight.classInfo[
+          _idx
+        ].reserverdSeats.filter((sn) => sn !== _ticket.seatNumber);
+        if (_ticket.isChild) {
+          _flight.classInfo[_idx].availabelChildrenSeats++;
+          _flight.classInfo[_idx].availabelAdultsSeats++;
+        } else {
+          _flight.classInfo[_idx].availabelAdultsSeats++;
+          _flight.classInfo[_idx].availabelChildrenSeats = Math.min(
+            _flight.classInfo[_idx].childrenLimit,
+            _flight.classInfo[_idx].availabelChildrenSeats + 1
+          );
+        }
+        await _flight.save();
         // to reset the array of tickets
-        await Reservation.updateOne({ reservation }, { tickets });
+
+        if (tickets.length) {
+          await Reservation.updateOne(reservation, { tickets });
+        } else {
+          await Reservation.findOneAndDelete(reservation);
+        }
         await sendMail(email, 'Cancel ticket', `You canceled your ticket`);
       } else {
         for (let ticketId of reservation.tickets) {
-          deletedTickets.push(
-            await Ticket.findOneAndDelete({ _id: ticketId, flightNumber })
-          );
+          let _ticket = await Ticket.findOneAndDelete({ _id: ticketId });
+          if (!_ticket) continue;
+          let _flight = await Flight.findOne({
+            flightNumber: _ticket.flightNumber,
+          });
+          let _idx = 0;
+          for (let i = 0; i < _flight.classInfo.length; i++)
+            if (_flight.classInfo[i].Type === _ticket.classType) _idx = i;
+          _flight.classInfo[_idx].reserverdSeats = _flight.classInfo[
+            _idx
+          ].reserverdSeats.filter((sn) => sn !== _ticket.seatNumber);
+          if (_ticket.isChild) {
+            _flight.classInfo[_idx].availabelChildrenSeats++;
+            _flight.classInfo[_idx].availabelAdultsSeats++;
+          } else {
+            _flight.classInfo[_idx].availabelAdultsSeats++;
+            _flight.classInfo[_idx].availabelChildrenSeats = Math.min(
+              _flight.classInfo[_idx].childrenLimit,
+              _flight.classInfo[_idx].availabelChildrenSeats + 1
+            );
+          }
+          await _flight.save();
         }
 
-        if (reservation.tickets.length === deletedTickets.length) {
-          await Reservation.findOneAndDelete(reservation);
-          await sendMail(
-            email,
-            'Cancel reservation',
-            `You canceled your reservation to the tickets of the flight number ${flightNumber}`
-          );
-        } else {
-          const tickets = reservation.tickets.filter(
-            (x) => !deletedTickets.includes(x)
-          );
-          await Reservation.updateOne({ reservation }, { tickets });
-          await sendMail(
-            email,
-            'Cancel flight tickets',
-            `You canceled the tickets of the flight ${flightNumber}`
-          );
-        }
+        await Reservation.findOneAndDelete({ reservation });
       }
+      await sendMail(
+        email,
+        'flight ticket Canceled',
+        `You canceled the tickets of the flight ${flightNumber}`
+      );
+      // console.log(res2);
     }
     res.status(200).json({
       success: true,

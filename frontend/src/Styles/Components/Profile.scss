@@ -1,0 +1,197 @@
+.profile {
+  display: block;
+  width: 100%;
+  min-height: calc(100vh - 61px);
+  padding: 40px 40px 40px 40px;
+  margin: 0;
+
+  .img-holder {
+    width: 150px;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .img {
+      width: 100px;
+      height: 100px;
+      background-color: gray;
+      border-radius: 50%;
+    }
+  }
+
+  form {
+    width: 100%;
+    position: relative;
+
+    .profile__update-btn {
+      position: absolute;
+      top: 0;
+      right: 0;
+      color: white;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 4px 8px;
+      border-radius: 5px;
+      background-color: rgb(31, 148, 31);
+      transition: transform 0.2s ease;
+
+      &:hover {
+        transform: scale(1.03);
+        box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+
+  .profile__info {
+    padding: 34px;
+  }
+
+  .profile__info > * + * {
+    margin-top: 10px;
+  }
+
+  .profile__name,
+  .profile__email {
+    padding: 6px;
+    border-radius: 5px;
+    font-size: 16px;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .input__wrap:hover .edit-btn {
+    display: block;
+  }
+
+  .edit-btn {
+    color: white;
+    padding: 1px 17px;
+    letter-spacing: 1px;
+    border-radius: 5px;
+    background-color: royalblue;
+    display: none;
+  }
+
+  .profile__role {
+    text-transform: uppercase;
+    color: green;
+    font-weight: 900;
+    font-size: 18px;
+  }
+
+  h3 {
+    font-size: 22px;
+  }
+
+  .reservation-list {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin: 20px 0px;
+    padding: 20px;
+    border-radius: 10px;
+    // overflow-x: scroll;
+    flex-wrap: wrap;
+
+    &::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    &::-webkit-scrollbar-track {
+      border-radius: 5px;
+      width: 5px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgb(65, 65, 65);
+      border-radius: 5px;
+      width: 5px;
+    }
+
+    .reservation {
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px dashed rgb(65, 65, 65);
+      flex-shrink: 0;
+      margin: 20px;
+
+      font-size: 12px;
+
+      .res__date {
+        margin-bottom: 8px;
+        span {
+          color: rgb(0, 146, 190);
+          padding: 0 4px;
+          letter-spacing: 1px;
+        }
+      }
+
+      .ticket-list {
+        overflow-x: scroll;
+        display: flex;
+        width: 280px;
+      }
+
+      .ticket {
+        position: relative;
+        font-size: 12px;
+        border: 1px solid black;
+        border-radius: 10px;
+        padding: 6px 8px;
+        flex-shrink: 0;
+
+        h3 {
+          font-size: 12px;
+          letter-spacing: 1px;
+          color: rgb(39, 43, 39);
+        }
+        span {
+          margin-right: 5px;
+          color: black;
+          font-weight: bold;
+        }
+
+        & + * {
+          margin-left: 8px;
+        }
+
+        & > * + * {
+          margin-top: 4px;
+        }
+
+        .seat {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 25px;
+          min-height: 25px;
+          padding: 4px;
+          color: white;
+          border-radius: 5px;
+          background-color: royalblue;
+          margin: 0 2px;
+        }
+
+        .cancel-btn {
+          position: absolute;
+          background-color: white;
+          font-size: 16px;
+          width: 25px;
+          height: 25px;
+          top: 2px;
+          right: 2px;
+          border-radius: 5px;
+          border: 1px dashed #444;
+          display: none;
+          justify-content: center;
+          align-items: center;
+        }
+
+        &:hover .cancel-btn {
+          display: flex;
+        }
+      }
+    }
+  }
+}

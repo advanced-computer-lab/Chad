@@ -1,0 +1,28 @@
+.popup__overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: none;
+
+  &.popup__overlay--show {
+    display: block;
+  }
+}
+.popup {
+  width: 500px;
+  max-height: 600px;
+  overflow-y: scroll;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  display: none;
+
+  &.popup--show {
+    display: block;
+  }
+}

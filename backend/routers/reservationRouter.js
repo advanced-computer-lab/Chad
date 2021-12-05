@@ -1,10 +1,14 @@
 const express = require('express');
-const router = express.Router();
+const crypto = require('crypto');
 const Reservation = require('../models/ReservationModel');
 const Ticket = require('../models/TicketModel');
 const User = require('../models/UserModel');
-const { USER } = require('../constants/userEnum');
+const Flight = require('../models/flightModel');
 const sendMail = require('../controllers/mailSender');
+const { USER } = require('../constants/userEnum');
+
+const router = express.Router();
+
 //TODO : reimplement sanatizeData
 const sanatizeData = (data) => {
   ['creatorId', '_id'].forEach((f) => delete data[f]);
@@ -14,14 +18,20 @@ const sanatizeData = (data) => {
 router.get('/reservations/:page', async (req, res) => {
   try {
     let page = Number(req.params.page);
-    let reservation = null;
+    let numberOfReservations = 0;
+
+    let reservations = null;
     if (req.userData.role === USER) {
-      reservation = await Reservation.find({ userId: req.userData.id })
+      numberOfReservations = await Reservation.find({
+        userId: req.userData.id,
+      }).countDocuments();
+      reservations = await Reservation.find({ userId: req.userData.id })
         .populate('tickets')
         .skip((page - 1) * 20)
         .limit(20);
     } else {
-      reservation = await Reservation.find()
+      numberOfReservations = await Reservation.find({}).countDocuments();
+      reservations = await Reservation.find()
         .populate('tickets')
         .skip((page - 1) * 20)
         .limit(20);
@@ -30,7 +40,8 @@ router.get('/reservations/:page', async (req, res) => {
     res.status(200).json({
       success: true,
       msg: 'ok',
-      reservation,
+      reservations,
+      maxPages: Math.ceil(numberOfReservations / 20),
     });
   } catch (err) {
     res.status(500).json({
@@ -69,11 +80,57 @@ router.get('/reservation/:reservationId', async (req, res) => {
 router.post('/reservation', async (req, res) => {
   try {
     const tickets = [];
-    for (let reservation of req.body.reservations) {
-      let ticket = reservation.flight;
-      for (let seat of reservation.seats) {
-        ticket.seatNumber = seat;
-        let result = await Ticket.create(ticket);
+    for (let ticket of req.body.tickets) {
+      let _flight = await Flight.findOne({ _id: ticket._id });
+      let class_idx;
+      _flight.classInfo.forEach(({ Type }, i) => {
+        if (Type === ticket.classType) class_idx = i;
+      });
+      for (let { seatNumber, price, isChild } of ticket.seats) {
+        // if the seat is already there throw an error
+        if (
+          _flight.classInfo[class_idx].reserverdSeats.includes(seatNumber) ||
+          !_flight.classInfo[class_idx].availabelAdultsSeats
+        ) {
+          throw new Error('the seat is reserved');
+        }
+
+        // add the seats to the reserced ones and update the availality
+        _flight.classInfo[class_idx].reserverdSeats.push(seatNumber);
+        if (isChild) {
+          _flight.classInfo[class_idx].availabelAdultsSeats--;
+          _flight.classInfo[class_idx].availabelChildrenSeats--;
+        } else {
+          _flight.classInfo[class_idx].availabelAdultsSeats--;
+          _flight.classInfo[class_idx].availabelChildrenSeats = Math.min(
+            _flight.classInfo[class_idx].availabelAdultsSeats,
+            _flight.classInfo[class_idx].availabelChildrenSeats
+          );
+        }
+        await _flight.save();
+
+        let result = await Ticket.create({
+          seatNumber,
+          isChild,
+          price,
+          // ?set this true for now
+          paid: true,
+          // GENERATE UNIQUE TICKET NUMBERS
+          ticketNumber: crypto.randomBytes(6).toString('hex'),
+          userId: req.userData.id,
+          ...[
+            'date',
+            'classType',
+            'flightNumber',
+            'departure',
+            'arrival',
+            'departureLocation',
+            'arrivalLocation',
+          ].reduce((acc, curr) => {
+            acc[curr] = ticket[curr];
+            return acc;
+          }, {}),
+        });
         tickets.push(result._id);
       }
     }

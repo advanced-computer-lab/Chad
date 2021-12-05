@@ -1,0 +1,87 @@
+.flight {
+  position: relative;
+  border: 1px solid gray;
+  border-radius: 5px;
+  min-height: 250px;
+  padding: 20px 10px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+
+  &.selected {
+    border: 2px solid rgb(0, 146, 190);
+  }
+
+  div + div {
+    margin-top: 10px;
+  }
+
+  .location {
+    justify-content: space-between;
+  }
+
+  .dates {
+    color: rgb(0, 146, 190);
+  }
+
+  .edit-delete {
+    position: absolute;
+    top: 4px;
+    right: 10px;
+
+    button {
+      color: white;
+      background: #fe0094;
+      padding: 2px 4px;
+      border-radius: 2px;
+    }
+
+    button + button {
+      margin-left: 10px;
+    }
+  }
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .seat {
+    width: 30px;
+    height: 30px;
+    color: white;
+    background: royalblue;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    margin: 4px;
+    border-radius: 5px;
+  }
+
+  &:hover .remove__btn {
+    display: flex;
+  }
+
+  .remove__btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 19px;
+    border: 1px dashed gray;
+    width: 20px;
+    height: 20px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+.flight + * {
+  margin-left: 20px;
+}

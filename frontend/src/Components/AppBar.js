@@ -1,9 +1,9 @@
 import { useContext } from "react";
 import { Link, useLocation, useHistory } from "react-router-dom";
 import { ADMIN } from "../Constants/UserEnums";
+import { clearSession } from "../Utils/SessionUtils";
 import UserContext from "../Context/UserContext";
 import "../Styles/Components/AppBar.scss";
-import { clearSession } from "../Utils/SessionUtils";
 
 function AppBar() {
   const location = useLocation();
@@ -51,6 +51,13 @@ function AppBar() {
         <Link to="/" className="link_btn app-bar__btn clickable">
           Home
         </Link>
+        {userData._id ? (
+          <Link
+            className="profile-btn clickable"
+            to="/profile"
+            title="profile"
+          />
+        ) : null}
       </div>
     </div>
   );
