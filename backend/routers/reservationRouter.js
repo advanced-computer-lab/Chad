@@ -17,12 +17,12 @@ router.get('/reservations/:page', async (req, res) => {
     let reservation = null;
     if (req.userData.role === USER) {
       reservation = await Reservation.find({ userId: req.userData.id })
-        .populate('Ticket')
+        .populate('tickets')
         .skip((page - 1) * 20)
         .limit(20);
     } else {
       reservation = await Reservation.find()
-        .populate('Ticket')
+        .populate('tickets')
         .skip((page - 1) * 20)
         .limit(20);
     }
