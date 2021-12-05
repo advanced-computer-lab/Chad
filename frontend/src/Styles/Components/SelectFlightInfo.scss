@@ -91,4 +91,16 @@
     border-radius: 5px;
     width: 5px;
   }
+
+  .info {
+    span {
+      margin: 0 4px;
+      letter-spacing: 1px;
+      font-weight: bold;
+    }
+
+    & + * {
+      margin-left: 30px;
+    }
+  }
 }

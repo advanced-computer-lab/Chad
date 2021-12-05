@@ -11,7 +11,7 @@ function SelectFLightInfo({ show, onClose }) {
   const { addToasts } = useContext(ToastContext);
 
   const { classInfo } = selectedFlight || { classInfo: "" };
-  console.log(selectedFlight, classInfo, classInfo[0]?.Type);
+  // console.log(selectedFlight, classInfo, classInfo[0]?.Type);
 
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [classType, setClassType] = useState(classInfo[0]?.Type);
@@ -106,6 +106,44 @@ function SelectFLightInfo({ show, onClose }) {
               </option>
             ))}
           </select>
+        </div>
+      </div>
+      <div className="row">
+        <div className="info" style={{ display: "inline-block" }}>
+          Price For Adult:
+          <span>
+            {classInfo.find(({ Type }) => Type === classType)?.priceForAdult}
+          </span>
+          EGP
+        </div>
+        <div className="info" style={{ display: "inline-block" }}>
+          Price For Child:
+          <span>
+            {classInfo.find(({ Type }) => Type === classType)?.priceForChild}
+          </span>
+          EGP
+        </div>
+      </div>
+      <div className="row">
+        <div className="info" style={{ display: "inline-block" }}>
+          Allowance For Adult:
+          <span>
+            {
+              classInfo.find(({ Type }) => Type === classType)
+                ?.baggageAllowanceForAdult
+            }
+          </span>
+          KG
+        </div>
+        <div className="info" style={{ display: "inline-block" }}>
+          Allowance For Child:
+          <span>
+            {
+              classInfo.find(({ Type }) => Type === classType)
+                ?.baggageAllowanceForChild
+            }
+          </span>
+          KG
         </div>
       </div>
       <div className="row">

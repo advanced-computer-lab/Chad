@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { ADMIN } from "../Constants/UserEnums";
 import { getUserInfo, updateUserInfo } from "../APIs/UserAPI";
+import { getReservations, deleteTicket } from "../APIs/ReservationAPI";
 import Loading from "../Components/Loading";
 import Paging from "../Components/Paging";
 import ToastContext from "../Context/ToastContext";
@@ -49,6 +50,21 @@ function Profile() {
         setRole(data.user.role);
 
         // TODO GET THE RESERVATIONS
+        res = await getReservations(page);
+
+        if (res.status !== 200) {
+          addToasts({
+            type: "danger",
+            body: "unexpected error, try again later",
+          });
+          setLoading(false);
+          return;
+        }
+
+        data = await res.json();
+        setReservations(data.reservations);
+        setMaxPage(data.maxPages);
+
         setLoading(false);
       } catch (err) {
         addToasts({
@@ -62,12 +78,71 @@ function Profile() {
   }, []);
 
   useEffect(() => {
-    //TODO get next pages
-    (async () => {})();
+    (async () => {
+      await updateResr();
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, maxPage]);
 
-  // TODO handle delete reservation
-  const handleCancelReservations = (id) => {};
+  const updateResr = async () => {
+    try {
+      setLoadingReservations(true);
+      let res, data;
+      res = await getReservations(page);
+
+      if (res.status !== 200) {
+        addToasts({
+          type: "danger",
+          body: "unexpected error, try again later",
+        });
+        setLoadingReservations(false);
+        return;
+      }
+
+      data = await res.json();
+      setReservations(data.reservations);
+      setMaxPage(data.maxPages);
+
+      setLoadingReservations(false);
+    } catch (err) {
+      addToasts({
+        type: "danger",
+        body: "unexpected error, try again later",
+      });
+      setLoadingReservations(false);
+    }
+  };
+
+  const handleCancelReservations = async (id) => {
+    console.log(id);
+    try {
+      setLoadingReservations(true);
+      let res = await deleteTicket(id);
+      let data = await res.json();
+
+      if (res.status !== 200 || !data.success) {
+        addToasts({
+          type: "danger",
+          body: "faild to delete the ticket",
+        });
+        setLoadingReservations(false);
+        return;
+      }
+
+      addToasts({
+        type: "success",
+        body: "ticket deleted",
+      });
+      setLoadingReservations(false);
+      await updateResr();
+    } catch (err) {
+      addToasts({
+        type: "danger",
+        body: "unexpected error",
+      });
+      setLoadingReservations(false);
+    }
+  };
 
   const handleUpdate = async (event) => {
     event.preventDefault();
@@ -164,10 +239,70 @@ function Profile() {
           <div className="" style={{ marginTop: "40px" }}>
             <h3>Reservations</h3>
             <div className="reservation-list">
+              {loadingReservations && <Loading />}
               {reservations.map((r, i) => (
-                <div key={i} className="reservation">
-                  TODO add reservations
-                </div>
+                <>
+                  {r.tickets.length ? (
+                    <div key={i} className="reservation">
+                      <div className="res__date">
+                        Added At
+                        <span>
+                          {new Date(r.createdAt).toLocaleString("en-US")}
+                        </span>
+                      </div>
+                      <div className="ticket-list">
+                        {r.tickets.map((t, j) => (
+                          <div key={`${i}-${j}`} className="ticket">
+                            <h3 className="ticket__number">
+                              <span>Ticket:</span>
+                              {t.ticketNumber}
+                            </h3>
+                            <h3 className="ticket__number">
+                              <span>Flight:</span>
+                              {t.flightNumber}
+                            </h3>
+                            <h3 className="ticket__number">
+                              <span>Dept:</span>
+                              {new Date(t.departure).toLocaleString("en-US")}
+                            </h3>
+                            <h3 className="ticket__number">
+                              <span>Arrival:</span>
+                              {new Date(t.arrival).toLocaleString("en-US")}
+                            </h3>
+                            <h3
+                              className="ticket__number"
+                              style={{ textTransform: "uppercase" }}
+                            >
+                              <span>Price:</span>
+                              {t.classType} , {t.isChild ? "CHILD" : "ADULT"}
+                            </h3>
+                            <h3 className="ticket__number">
+                              <span>Price:</span>
+                              {t.price} EGP
+                            </h3>
+                            <h3 className="ticket__seats">
+                              <span>Seat:</span>
+                              <div className="seat">{t.seatNumber}</div>
+                            </h3>
+                            <h3
+                              className="ticket__number"
+                              style={{ letterSpacing: "unset" }}
+                            >
+                              <span>{t.paid ? "PAID" : "NOT PAID"}</span>
+                            </h3>
+                            <button
+                              type="button"
+                              className="cancel-btn clickable"
+                              onClick={() => handleCancelReservations(t._id)}
+                            >
+                              x
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+                </>
               ))}
             </div>
             {reservations.length ? (

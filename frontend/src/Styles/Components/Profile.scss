@@ -2,7 +2,7 @@
   display: block;
   width: 100%;
   min-height: calc(100vh - 61px);
-  padding: 40px 40px 0 40px;
+  padding: 40px 40px 40px 40px;
   margin: 0;
 
   .img-holder {
@@ -84,13 +84,15 @@
   }
 
   .reservation-list {
+    position: relative;
     display: flex;
     align-items: center;
     width: 100%;
     margin: 20px 0px;
     padding: 20px;
     border-radius: 10px;
-    overflow-x: scroll;
+    // overflow-x: scroll;
+    flex-wrap: wrap;
 
     &::-webkit-scrollbar {
       width: 5px;
@@ -111,6 +113,85 @@
       padding: 20px;
       border-radius: 10px;
       border: 1px dashed rgb(65, 65, 65);
+      flex-shrink: 0;
+      margin: 20px;
+
+      font-size: 12px;
+
+      .res__date {
+        margin-bottom: 8px;
+        span {
+          color: rgb(0, 146, 190);
+          padding: 0 4px;
+          letter-spacing: 1px;
+        }
+      }
+
+      .ticket-list {
+        overflow-x: scroll;
+        display: flex;
+        width: 280px;
+      }
+
+      .ticket {
+        position: relative;
+        font-size: 12px;
+        border: 1px solid black;
+        border-radius: 10px;
+        padding: 6px 8px;
+        flex-shrink: 0;
+
+        h3 {
+          font-size: 12px;
+          letter-spacing: 1px;
+          color: rgb(39, 43, 39);
+        }
+        span {
+          margin-right: 5px;
+          color: black;
+          font-weight: bold;
+        }
+
+        & + * {
+          margin-left: 8px;
+        }
+
+        & > * + * {
+          margin-top: 4px;
+        }
+
+        .seat {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 25px;
+          min-height: 25px;
+          padding: 4px;
+          color: white;
+          border-radius: 5px;
+          background-color: royalblue;
+          margin: 0 2px;
+        }
+
+        .cancel-btn {
+          position: absolute;
+          background-color: white;
+          font-size: 16px;
+          width: 25px;
+          height: 25px;
+          top: 2px;
+          right: 2px;
+          border-radius: 5px;
+          border: 1px dashed #444;
+          display: none;
+          justify-content: center;
+          align-items: center;
+        }
+
+        &:hover .cancel-btn {
+          display: flex;
+        }
+      }
     }
   }
 }

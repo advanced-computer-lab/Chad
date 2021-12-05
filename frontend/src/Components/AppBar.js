@@ -52,7 +52,11 @@ function AppBar() {
           Home
         </Link>
         {userData._id ? (
-          <Link className="profile-btn clickable" to="/profile" />
+          <Link
+            className="profile-btn clickable"
+            to="/profile"
+            title="profile"
+          />
         ) : null}
       </div>
     </div>

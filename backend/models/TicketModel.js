@@ -9,6 +9,14 @@ const TicketSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    departure: {
+      type: Date,
+      required: true,
+    },
+    arrival: {
+      type: Date,
+      required: true,
+    },
     departureLocation: {
       type: mongoose.Types.ObjectId,
       ref: 'Place',
