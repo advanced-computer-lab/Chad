@@ -162,7 +162,7 @@ function SelectFLightInfo({ show, onClose }) {
         </div>
         <div className="input__wrap">
           <label className="input__label" htmlFor="num-child">
-            number of Adults
+            number of children
           </label>
           <input
             className="input"

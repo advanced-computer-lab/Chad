@@ -2,6 +2,10 @@ const express = require('express');
 const { ADMIN } = require('../constants/userEnum');
 const router = express.Router();
 const Flight = require('../models/flightModel');
+const Ticket = require('../models/TicketModel');
+const Reservation = require('../models/ReservationModel');
+const User = require('../models/UserModel');
+const sendMail = require('../controllers/mailSender');
 
 // remove the fields that cannot be modified
 const sanatizeData = (data) => {
@@ -121,6 +125,35 @@ router.delete('/flight/:flightId', async (req, res) => {
   try {
     const _id = req.params.flightId;
     const result = await Flight.deleteOne({ _id });
+    const tickets = await Ticket.delete({
+      flightNumber: result.flightNumber,
+    }).select('_id');
+    let users = '';
+
+    for (let { ticketId } of tickets) {
+      const reservation = await Reservation.findOne({
+        tickets: ticketId,
+      }).populate('userId');
+      let remainingTickets = [];
+      if (reservation) {
+        for (let ticket in reservation.tickets) {
+          if (!(ticket in tickets)) {
+            remainingTickets.push(ticket);
+          }
+        }
+        if (remainingTickets.length != 0) {
+          await Reservation.deleteOne({ _id: reservation._id });
+        } else {
+          await Reservation.updateOne(
+            { _id: reservation._id },
+            { tickets: remainingTickets }
+          );
+        }
+        users += reservation.userId.email + ' ';
+      }
+    }
+
+    await sendMail(users, 'Flight canceled', 'Your flight has been canceled');
 
     res.status(200).json({
       success: true,
