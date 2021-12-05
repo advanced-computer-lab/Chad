@@ -11,37 +11,21 @@ const sanatizeData = (data) => {
   return data;
 };
 
-const joinReservationAndTicket = async (reservations) => {
-  const result = [];
-  for (let reservation of reservations) {
-    let tickets = [];
-    for (let _id of reservation.tickets) {
-      let ticket = await Ticket.findOne({ _id });
-      tickets.push(ticket);
-    }
-    result.push({
-      _id: reservation._id,
-      userId: reservation.userId,
-      tickets,
-    });
-  }
-  return result;
-};
-
 router.get('/reservations/:page', async (req, res) => {
   try {
     let page = Number(req.params.page);
     let reservation = null;
     if (req.userData.role === USER) {
       reservation = await Reservation.find({ userId: req.userData.id })
+        .populate('Ticket')
         .skip((page - 1) * 20)
         .limit(20);
     } else {
       reservation = await Reservation.find()
+        .populate('Ticket')
         .skip((page - 1) * 20)
         .limit(20);
     }
-    reservation = await joinReservationAndTicket(reservation);
 
     res.status(200).json({
       success: true,
@@ -62,9 +46,11 @@ router.get('/reservation/:reservationId', async (req, res) => {
     let _id = req.params.reservationId;
     let reservation = null;
     if (req.userData.role === USER)
-      reservation = await Reservation.find({ _id, userId: req.userData.id });
-    else reservation = await Reservation.find({ _id });
-    reservation = await joinReservationAndTicket(reservation);
+      reservation = await Reservation.find({
+        _id,
+        userId: req.userData.id,
+      }).populate('Ticket');
+    else reservation = await Reservation.find({ _id }).populate('Ticket');
 
     res.status(200).json({
       success: true,
