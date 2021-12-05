@@ -113,7 +113,8 @@ function Profile() {
   };
 
   const handleCancelReservations = async (id) => {
-    console.log(id);
+    // console.log(id);
+    if (!window.confirm("are you sure you want to cancel the ticket")) return;
     try {
       setLoadingReservations(true);
       let res = await deleteTicket(id);
