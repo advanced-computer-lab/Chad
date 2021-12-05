@@ -13,3 +13,14 @@ export async function updateUser(data) {
     body: JSON.stringify(data),
   });
 }
+
+export async function getUser() {
+  return await fetch(`${BASE_URL}/user-info`, {
+    method: "GET",
+    headers: {
+      mode: "cors",
+      "Content-Type": "application/json",
+      token: getSession(),
+    },
+  });
+}

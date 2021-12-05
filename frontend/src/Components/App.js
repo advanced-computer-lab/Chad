@@ -13,6 +13,7 @@ import Register from "../Pages/Register";
 import Loading from "./Loading";
 import EditFlight from "../Pages/EditFlight";
 import { getPlaces } from "../APIs/PlaceAPI";
+import EditUserInfo from "../Pages/EditUserInfo";
 
 function App() {
   const [userData, setUserData] = useState({});
@@ -82,6 +83,9 @@ function App() {
               </Route>
               <Route path="/register">
                 <Register />
+              </Route>
+              <Route path="/edit-user-info">
+                <EditUserInfo />
               </Route>
               <ProtectedRotute path="/create-flight">
                 <CreateFlight />

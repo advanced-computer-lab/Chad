@@ -51,6 +51,14 @@ function AppBar() {
         <Link to="/" className="link_btn app-bar__btn clickable">
           Home
         </Link>
+        {!location.pathname.includes("edit-user-info") && (
+          <Link
+            to="/edit-user-info"
+            className="link_btn app-bar__btn clickable"
+          >
+            Edit Info
+          </Link>
+        )}
       </div>
     </div>
   );
