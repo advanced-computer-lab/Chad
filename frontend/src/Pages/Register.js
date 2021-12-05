@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { useHistory } from "react-router";
 import { registerReq } from "../APIs/AuthAPIs";
-import { ToastContext } from "../Context/ToastContext";
+import ToastContext from "../Context/ToastContext";
 import "../Styles/Components/Register.scss";
 
 function Register() {
