@@ -128,8 +128,7 @@ router.delete('/flight/:flightId', async (req, res) => {
     const tickets = await Ticket.find({
       flightNumber: result.flightNumber,
     }).select('_id');
-    let users = '';
-    console.log(tickets);
+    let users = [];
     for (let ticketId of tickets) {
       const reservation = await Reservation.findOne({
         tickets: ticketId,
@@ -141,6 +140,7 @@ router.delete('/flight/:flightId', async (req, res) => {
             remainingTickets.push(ticket);
           }
         }
+
         if (remainingTickets.length != 0) {
           await Reservation.deleteOne({ _id: reservation._id });
         } else {
@@ -149,18 +149,14 @@ router.delete('/flight/:flightId', async (req, res) => {
             { tickets: remainingTickets }
           );
         }
-        users += reservation.userId.email + ', ';
+        users.push(reservation.userId.email);
       }
     }
     await Ticket.deleteMany({
       flightNumber: result.flightNumber,
     });
-    if (users) {
-      const info = await sendMail(
-        users.substring(0, users.length - 2),
-        'Flight canceled',
-        'Your flight has been canceled'
-      );
+    if (!users.length) {
+      await sendMail(users, 'Flight canceled', 'Your flight has been canceled');
     }
     res.status(200).json({
       success: true,
