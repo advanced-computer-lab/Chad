@@ -2,11 +2,13 @@ import { useContext, useState } from "react";
 import { TYPES } from "../Constants/ClassEnums";
 import SelectedFlightContext from "../Context/SelectedFlight";
 import SelectedFlights from "../Context/SelectedFlights";
+import ToastContext from "../Context/ToastContext";
 import "../Styles/Components/SelectFlightInfo.scss";
 
 function SelectFLightInfo({ show, onClose }) {
   const { selectedFlight } = useContext(SelectedFlightContext);
   const { selectedFlights, setSelectedFlights } = useContext(SelectedFlights);
+  const { addToasts } = useContext(ToastContext);
 
   const { classInfo } = selectedFlight || { classInfo: "" };
   console.log(selectedFlight, classInfo, classInfo[0]?.Type);
@@ -38,9 +40,11 @@ function SelectFLightInfo({ show, onClose }) {
       selectedSeats.length !==
       Number(numberOfAdult) + Number(numberOfChild)
     ) {
-      console.log("err");
+      addToasts({
+        type: "danger",
+        body: "please select the number of passenger correctly",
+      });
       return;
-      // TODO show ERR msg
     }
 
     let flightToBook = {
@@ -57,8 +61,12 @@ function SelectFLightInfo({ show, onClose }) {
         ({ flightNumber }) => flightNumber === flightToBook.flightNumber
       )
     ) {
-      console.log("err");
-      // TODO show err msg
+      // TODO handle not show in the first place
+      addToasts({
+        type: "danger",
+        body: "you can't select more than two flights",
+      });
+      onClose();
       return;
     }
 

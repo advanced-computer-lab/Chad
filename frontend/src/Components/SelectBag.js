@@ -1,17 +1,35 @@
 import { useContext, useState } from "react";
-import SelectedFlights from "../Context/SelectedFlights";
+import { useHistory } from "react-router";
+import { saveToLS, removeFromLS } from "../Utils/storageUtils.js";
 import Flight from "./Flight";
+import SelectedFlights from "../Context/SelectedFlights";
+import UserContext from "../Context/UserContext";
 import "../Styles/Components/SelectBag.scss";
 
 function SelectBag() {
-  const { selectedFlights } = useContext(SelectedFlights);
+  const { selectedFlights, setSelectedFlights } = useContext(SelectedFlights);
+  const { userData } = useContext(UserContext);
   const [show, setShow] = useState(false);
+  const isAuth = userData && Object.keys(userData).length;
+  const history = useHistory();
 
   const handelShow = () => {
     setShow((prev) => !prev);
   };
-  const handelRemove = () => {};
-  const handelBook = () => {};
+  const handelRemove = (flightNumber) => {
+    setSelectedFlights((prev) =>
+      prev.filter((f) => f.flightNumber !== flightNumber)
+    );
+    if (selectedFlights.length === 1) setShow(false);
+    removeFromLS("FLIGHTSTOBOOK");
+  };
+  const handelBook = () => {
+    //TODO post tickets to backend
+  };
+  const handelLoginRedirect = () => {
+    saveToLS("FLIGHTSTOBOOK", selectedFlights);
+    history.push("/login");
+  };
 
   return (
     <>
@@ -27,6 +45,7 @@ function SelectBag() {
               data={f}
               editable={false}
               showX={true}
+              choosen={true}
               onRemove={handelRemove}
             />
           ))}
@@ -40,9 +59,18 @@ function SelectBag() {
         )}
         {show && (
           <div className="row book-div">
-            <button className="clickable book-btn" nClick={handelBook}>
-              Book
-            </button>
+            {isAuth ? (
+              <button className="clickable book-btn" onClick={handelBook}>
+                Book
+              </button>
+            ) : (
+              <button
+                className="clickable book-btn"
+                onClick={handelLoginRedirect}
+              >
+                Login
+              </button>
+            )}
           </div>
         )}
       </div>

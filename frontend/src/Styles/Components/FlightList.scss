@@ -1,9 +1,10 @@
 .flight-list {
   display: flex;
   align-items: center;
-  width: 800px;
+  width: 90%;
   margin: 20px 0px;
   padding: 20px;
+  border-radius: 10px;
   overflow-x: scroll;
 
   &::-webkit-scrollbar {

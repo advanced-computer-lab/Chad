@@ -22,6 +22,9 @@ router.post('/search-flights', async (req, res) => {
       Object.keys(attributes).length != 0 ||
       (Object.keys(attributes).length === 0 && req.userData?.role === ADMIN)
     ) {
+      let numberOflights = await Flight.find(attributes).countDocuments();
+      let numberOfReturnFlights = 0;
+
       let flights = await Flight.find(attributes)
         .populate('departureLocation')
         .populate('arrivalLocation')
@@ -31,6 +34,9 @@ router.post('/search-flights', async (req, res) => {
 
       let returnFlights = [];
       if (roundtrip) {
+        numberOfReturnFlights = await Flight.find(
+          roundTripAttr
+        ).countDocuments();
         returnFlights = await Flight.find(roundTripAttr)
           .populate('departureLocation')
           .populate('arrivalLocation')
@@ -45,6 +51,8 @@ router.post('/search-flights', async (req, res) => {
         roundtrip,
         returnFlights,
         flights,
+        maxPages: Math.ceil(numberOflights / 20),
+        maxRPages: Math.ceil(numberOfReturnFlights / 20),
       });
     } else {
       // no one other than the admins are allowed to request all the flights

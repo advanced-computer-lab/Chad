@@ -42,8 +42,6 @@ function ClassInfo({ data, onChange }) {
     setInfo([...info]);
   };
 
-  // TODO make remove class btn
-
   // don't render empty array
   if (info.length === 0) return <></>;
 

@@ -1,0 +1,26 @@
+.paging {
+  display: flex;
+  justify-content: center;
+
+  .page__number {
+    margin: 0 10px;
+    padding: 0 4px;
+    display: flex;
+    align-items: center;
+  }
+
+  .page__cntrl-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    background: transparent;
+    margin: 0;
+    border-radius: 50%;
+
+    &:not(:disabled):hover {
+      transform: scale(1.08);
+      box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+    }
+  }
+}

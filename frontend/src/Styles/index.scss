@@ -9,11 +9,11 @@ $bar-height: 40px;
   font-family: "Poppins", sans-serif;
 }
 
-body,
-html,
-#root {
-  min-height: 150vh;
-}
+// body,
+// html,
+// #root {
+//   // min-height: 150vh;
+// }
 
 h1,
 .logo {
@@ -58,6 +58,10 @@ button {
 
 .clickable:hover {
   cursor: pointer;
+}
+
+.d-block {
+  display: block;
 }
 
 .link_btn {
