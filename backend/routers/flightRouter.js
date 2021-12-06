@@ -4,7 +4,6 @@ const router = express.Router();
 const Flight = require('../models/flightModel');
 const Ticket = require('../models/TicketModel');
 const Reservation = require('../models/ReservationModel');
-const User = require('../models/UserModel');
 const sendMail = require('../controllers/mailSender');
 
 // remove the fields that cannot be modified
@@ -128,13 +127,17 @@ router.delete('/flight/:flightId', async (req, res) => {
     const tickets = await Ticket.find({
       flightNumber: result.flightNumber,
     }).select('_id');
-    let users = [];
     for (let ticketId of tickets) {
       const reservation = await Reservation.findOne({
         tickets: ticketId,
       }).populate('userId');
       let remainingTickets = [];
       if (reservation) {
+        await sendMail(
+          reservation.userId.email,
+          'Flight canceled',
+          'Your flight has been canceled'
+        );
         for (let ticket in reservation.tickets) {
           if (!(ticket in tickets)) {
             remainingTickets.push(ticket);
@@ -149,15 +152,12 @@ router.delete('/flight/:flightId', async (req, res) => {
             { tickets: remainingTickets }
           );
         }
-        users.push(reservation.userId.email);
       }
     }
     await Ticket.deleteMany({
       flightNumber: result.flightNumber,
     });
-    if (!users.length) {
-      await sendMail(users, 'Flight canceled', 'Your flight has been canceled');
-    }
+
     res.status(200).json({
       success: true,
       msg: 'ok',

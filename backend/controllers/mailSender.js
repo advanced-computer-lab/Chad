@@ -22,16 +22,15 @@ const sendMail = async (mail, subject, text) => {
       },
       auth: {
         type: process.env.AUTH_TYPE,
-        user: process.env.USER_M,
+        user: process.env.USER_MAIL,
         clientId: process.env.CLIENT_ID,
         clientSecret: process.env.CLIENT_SECRET,
         refreshToken: process.env.REFRESH_TOKEN,
         accessToken,
       },
     });
-
     const Info = await transport.sendMail({
-      from: process.env.USER_M,
+      from: process.env.USER_MAIL,
       to: mail,
       subject,
       text,
