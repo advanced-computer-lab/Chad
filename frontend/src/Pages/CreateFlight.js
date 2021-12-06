@@ -7,9 +7,11 @@ import ClassInfo from "../Components/ClassInfo";
 import UserContext from "../Context/UserContext";
 import PlaceContext from "../Context/PlaceContext";
 import ToastContext from "../Context/ToastContext";
+import Loading from "../Components/Loading";
 import "../Styles/Components/CreateFlight.scss";
 
 function CreateFlight() {
+  const [loading, setLoading] = useState(false);
   const [flightNumber, setFlightNumber] = useState("");
   const [departure, setDeparture] = useState("");
   const [arrival, setArrival] = useState("");
@@ -73,6 +75,8 @@ function CreateFlight() {
   const handleAddFLight = async (event) => {
     event.preventDefault();
 
+    setLoading(true);
+
     try {
       let flight = {
         flightNumber,
@@ -102,6 +106,7 @@ function CreateFlight() {
           type: "danger",
           body: "error adding flight",
         });
+        setLoading(false);
         return;
       }
 
@@ -110,6 +115,7 @@ function CreateFlight() {
         type: "success",
         body: "flight added successfully",
       });
+      setLoading(false);
 
       clearFields();
     } catch (err) {
@@ -118,6 +124,7 @@ function CreateFlight() {
         type: "danger",
         body: "unexpected error",
       });
+      setLoading(false);
     }
   };
 
@@ -128,7 +135,8 @@ function CreateFlight() {
 
   return (
     <div className="page" onSubmit={handleAddFLight}>
-      <form className="create-flight-form">
+      <form className="create-flight-form" style={{ position: "relative" }}>
+        {loading && <Loading />}
         <div className="create-flight-form__content">
           <h2 className="create-flight-form__h2">Add Flight</h2>
           <div className="create-flight-form__wrap">
