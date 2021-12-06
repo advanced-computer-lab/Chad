@@ -202,6 +202,9 @@ function SelectFLightInfo({ show, onClose }) {
           Continue
         </button>
       </div>
+      <button className="exit-btn clickable" onClick={() => onClose()}>
+        x
+      </button>
     </div>
   );
 }

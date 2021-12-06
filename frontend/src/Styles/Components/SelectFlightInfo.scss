@@ -103,4 +103,17 @@
       margin-left: 30px;
     }
   }
+
+  .exit-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    font-size: 17px;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px dashed #333;
+  }
 }
