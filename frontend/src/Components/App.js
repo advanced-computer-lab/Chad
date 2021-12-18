@@ -23,6 +23,7 @@ import ToastList from "./ToastList";
 import "../Styles/Components/Overlay.scss";
 import ProtectedRoute from "./ProtectedRoute";
 import Profile from "../Pages/Profile";
+import error404 from "../Assets/404.svg";
 
 function App() {
   const [userData, setUserData] = useState({});
@@ -160,6 +161,19 @@ function App() {
                     <ProtectedRotute path="/edit-flight">
                       <EditFlight />
                     </ProtectedRotute>
+                    <Route>
+                      <img
+                        src={error404}
+                        alt="404"
+                        width="700"
+                        style={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
+                        }}
+                      />
+                    </Route>
                   </Switch>
                 </>
               )}
