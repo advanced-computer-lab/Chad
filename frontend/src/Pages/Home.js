@@ -130,7 +130,6 @@ function Home() {
   };
 
   const handleGetAll = async (resetPage = true) => {
-    console.log("all");
     setLast("ALL");
     try {
       setLoading(true);
@@ -201,6 +200,7 @@ function Home() {
                 id="form"
                 className="search-form__input"
                 type="text"
+                width="212"
                 value={from}
                 onChange={({ target }) => setFrom(target.value)}
               >
@@ -219,6 +219,7 @@ function Home() {
                 To
               </label>
               <select
+                width="212"
                 id="to"
                 className="search-form__input"
                 type="text"
@@ -386,8 +387,9 @@ function Home() {
               </label>
               <div className="row">
                 <input
-                  className="search-form__input"
+                  className="search-form__input number"
                   id="seats-adult"
+                  title="adult"
                   type="number"
                   value={neededSeats.adult}
                   min="1"
@@ -399,8 +401,9 @@ function Home() {
                   }
                 />
                 <input
-                  className="search-form__input"
+                  className="search-form__input number"
                   id="seats-child"
+                  title="child"
                   type="number"
                   value={neededSeats.child}
                   min="0"
@@ -413,27 +416,28 @@ function Home() {
                 />
               </div>
             </div>
-          </div>
-          <div className="row">
+
             <div className="search-form__input-wrap">
               <label className="search-form__label" htmlFor="select-class">
                 Class
               </label>
-              <select
-                className="search-form__select"
-                id="select-class"
-                value={classInfo}
-                onChange={({ target }) => setClassInfo(target.value)}
-              >
-                <option value="" disabled hidden>
-                  Choose A Class
-                </option>
-                {TYPES.map((t, i) => (
-                  <option vlaue={t} key={i}>
-                    {t}
+              <div className="row">
+                <select
+                  className="search-form__select"
+                  id="select-class"
+                  value={classInfo}
+                  onChange={({ target }) => setClassInfo(target.value)}
+                >
+                  <option value="" disabled hidden>
+                    Choose A Class
                   </option>
-                ))}
-              </select>
+                  {TYPES.map((t, i) => (
+                    <option vlaue={t} key={i}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
           <div className="row bottom together">

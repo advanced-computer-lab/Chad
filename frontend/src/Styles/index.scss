@@ -7,13 +7,13 @@ $bar-height: 40px;
   padding: 0;
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
+  scroll-behavior: smooth;
 }
 
-// body,
-// html,
-// #root {
-//   // min-height: 150vh;
-// }
+#root {
+  position: relative;
+  min-height: 100vh;
+}
 
 h1,
 .logo {

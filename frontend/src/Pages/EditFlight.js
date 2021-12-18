@@ -112,8 +112,8 @@ function EditFlight() {
 
   return (
     <div className="page" onSubmit={handleEditFLight}>
+      {loading && <Loading />}
       <form className="create-flight-form">
-        {loading && <Loading />}
         <div className="create-flight-form__content">
           <h2 className="create-flight-form__h2">Edit Flight</h2>
           <div className="create-flight-form__wrap">
@@ -127,7 +127,7 @@ function EditFlight() {
               value={flightNumber}
               onChange={({ target }) => setFlightNumber(target.value)}
               maxLength="10"
-              pattern="\w+"
+              pattern="(\w|-)+"
             />
           </div>
           <div className="row">

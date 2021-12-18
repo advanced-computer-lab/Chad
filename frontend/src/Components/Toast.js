@@ -8,7 +8,11 @@ function Toast({ id, data, onRemove }) {
   }, []);
 
   return (
-    <div className={`toast ${data?.type}`}>
+    <div
+      className={`toast ${data?.type} clickable`}
+      onClick={() => onRemove(id)}
+      title="click to dismiss"
+    >
       <h3>{data?.heading}</h3>
       <p>{data?.body}</p>
     </div>
