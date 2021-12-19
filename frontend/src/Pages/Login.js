@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { loginReq } from "../APIs/AuthAPIs";
 import { saveSession } from "../Utils/SessionUtils";
 import { useHistory } from "react-router";
@@ -10,9 +10,14 @@ import "../Styles/Components/Login.scss";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [animateClass, setAnimateClass] = useState("animate");
 
   const { setUserData } = useContext(UserContext);
   const { addToasts } = useContext(ToastContext);
+
+  useEffect(() => {
+    setTimeout(() => setAnimateClass(""), 1000);
+  }, []);
 
   const history = useHistory();
 
@@ -67,7 +72,7 @@ function Login() {
   };
 
   return (
-    <div className="page login">
+    <div className={`page login ${animateClass}`}>
       <img src={Journey} alt="logo" />
       <form className="login-form" onSubmit={onSubmit}>
         <div className="login-form__content">

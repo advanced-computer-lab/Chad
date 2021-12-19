@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useHistory } from "react-router";
 import { registerReq } from "../APIs/AuthAPIs";
 import ToastContext from "../Context/ToastContext";
@@ -11,6 +11,11 @@ function Register() {
   const [password, setPassword] = useState("");
   const [age, setAge] = useState("");
   const [mobile, setMobile] = useState("");
+  const [animateClass, setAnimateClass] = useState("animate");
+
+  useEffect(() => {
+    setTimeout(() => setAnimateClass(""), 1000);
+  }, []);
 
   const { addToasts } = useContext(ToastContext);
 
@@ -50,7 +55,7 @@ function Register() {
   };
 
   return (
-    <div className="page register">
+    <div className={`page register ${animateClass}`}>
       <img src={airport} alt="airport" />
       <form className="reg-form" onSubmit={onSubmit}>
         <div className="reg-form__content">
