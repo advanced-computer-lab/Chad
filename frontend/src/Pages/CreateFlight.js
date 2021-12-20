@@ -6,16 +6,19 @@ import { TYPES } from "../Constants/ClassEnums";
 import ClassInfo from "../Components/ClassInfo";
 import UserContext from "../Context/UserContext";
 import PlaceContext from "../Context/PlaceContext";
+import ToastContext from "../Context/ToastContext";
+import Loading from "../Components/Loading";
 import "../Styles/Components/CreateFlight.scss";
 
 function CreateFlight() {
+  const [loading, setLoading] = useState(false);
   const [flightNumber, setFlightNumber] = useState("");
   const [departure, setDeparture] = useState("");
   const [arrival, setArrival] = useState("");
   const [numberOfSeats, setNumberOfSeats] = useState(1);
   const [departureLocation, setDepartureLocation] = useState("");
   const [arrivalLocation, setArrivalLocation] = useState("");
-  const [priceOfExtraWeight, setPriceOfExtraWeight] = useState(0);
+  const [priceOfExtraWeight, setPriceOfExtraWeight] = useState("0");
   const [classInfo, setClassInfo] = useState([
     {
       Type: TYPES[0],
@@ -32,6 +35,7 @@ function CreateFlight() {
 
   const history = useHistory();
   const { userData } = useContext(UserContext);
+  const { addToasts } = useContext(ToastContext);
 
   const isValid =
     flightNumber &&
@@ -51,7 +55,7 @@ function CreateFlight() {
       setDepartureLocation,
       setArrivalLocation,
       setNumberOfSeats,
-      priceOfExtraWeight,
+      setPriceOfExtraWeight,
     ].forEach((f) => f(""));
 
     setClassInfo([
@@ -70,6 +74,8 @@ function CreateFlight() {
 
   const handleAddFLight = async (event) => {
     event.preventDefault();
+
+    setLoading(true);
 
     try {
       let flight = {
@@ -94,17 +100,31 @@ function CreateFlight() {
       // return 0;
       let res = await addFlight(flight);
 
-      // TODO display error msg
       if (res.status !== 200) {
         console.log(await res.json());
+        addToasts({
+          type: "danger",
+          body: "error adding flight",
+        });
+        setLoading(false);
         return;
       }
 
       await res.json();
+      addToasts({
+        type: "success",
+        body: "flight added successfully",
+      });
+      setLoading(false);
 
       clearFields();
     } catch (err) {
-      // TODO handle err and show msgs
+      console.log(err);
+      addToasts({
+        type: "danger",
+        body: "unexpected error",
+      });
+      setLoading(false);
     }
   };
 
@@ -115,7 +135,8 @@ function CreateFlight() {
 
   return (
     <div className="page" onSubmit={handleAddFLight}>
-      <form className="create-flight-form">
+      <form className="create-flight-form" style={{ position: "relative" }}>
+        {loading && <Loading />}
         <div className="create-flight-form__content">
           <h2 className="create-flight-form__h2">Add Flight</h2>
           <div className="create-flight-form__wrap">

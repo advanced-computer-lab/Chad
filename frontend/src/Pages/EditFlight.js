@@ -2,11 +2,13 @@ import { useContext, useLayoutEffect, useState } from "react";
 import { updateFlight } from "../APIs/FlightAPI";
 import { useHistory } from "react-router";
 import { ADMIN } from "../Constants/UserEnums";
+import { useLocation } from "react-router";
+import Loading from "../Components/Loading";
 import ClassInfo from "../Components/ClassInfo";
 import UserContext from "../Context/UserContext";
 import PlaceContext from "../Context/PlaceContext";
+import ToastContext from "../Context/ToastContext";
 import "../Styles/Components/CreateFlight.scss";
-import { useLocation } from "react-router";
 
 function EditFlight() {
   const {
@@ -15,7 +17,9 @@ function EditFlight() {
   console.log(flight);
   const history = useHistory();
   const { userData } = useContext(UserContext);
+  const { addToasts } = useContext(ToastContext);
 
+  const [loading, setLoading] = useState(false);
   const [flightNumber, setFlightNumber] = useState(flight?.flightNumber);
   const [departure, setDeparture] = useState(flight?.departure);
   const [arrival, setArrival] = useState(flight?.arrival);
@@ -58,30 +62,46 @@ function EditFlight() {
 
   const handleEditFLight = async (event) => {
     event.preventDefault();
-
+    setLoading(true);
     try {
       let newData = {
         departure,
         arrival,
-        departureLocation,
-        arrivalLocation,
+        departureLocation: departureLocation?._id,
+        arrivalLocation: arrivalLocation?._id,
         numberOfSeats,
         classInfo,
         flightNumber,
         PriceOfExtraWeight: priceOfExtraWeight,
       };
-      // console.log(newData);
-      // return 0;
+
       let res = await updateFlight(flight._id, newData);
 
-      // TODO display error msg
-      if (res.status !== 200) return;
+      if (res.status !== 200) {
+        addToasts({
+          type: "danger",
+          body: "edit flight faild",
+        });
+        setLoading(false);
+        console.log("error", await res.json());
+        return;
+      }
 
       await res.json();
+      addToasts({
+        type: "success",
+        body: "flight edited successfully",
+      });
+
+      setLoading(false);
 
       clearFields();
     } catch (err) {
-      // TODO handle err and show msgs
+      addToasts({
+        type: "danger",
+        body: "unexpected error",
+      });
+      setLoading(false);
     }
   };
 
@@ -92,6 +112,7 @@ function EditFlight() {
 
   return (
     <div className="page" onSubmit={handleEditFLight}>
+      {loading && <Loading />}
       <form className="create-flight-form">
         <div className="create-flight-form__content">
           <h2 className="create-flight-form__h2">Edit Flight</h2>
@@ -106,7 +127,7 @@ function EditFlight() {
               value={flightNumber}
               onChange={({ target }) => setFlightNumber(target.value)}
               maxLength="10"
-              pattern="\w+"
+              pattern="(\w|-)+"
             />
           </div>
           <div className="row">

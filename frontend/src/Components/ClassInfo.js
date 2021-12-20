@@ -3,9 +3,9 @@ import { TYPES } from "../Constants/ClassEnums";
 import "../Styles/Components/ClassInfo.scss";
 
 function ClassInfo({ data, onChange }) {
-  const [number, setNumber] = useState(1);
+  // const [number, setNumber] = useState(1);
   const [info, setInfo] = useState(data);
-  const isAvail = number < 4;
+  const isAvail = info.length < 4;
 
   useEffect(() => {
     onChange(info);
@@ -33,24 +33,22 @@ function ClassInfo({ data, onChange }) {
         childrenLimit: 1,
       },
     ]);
-    setNumber(number + 1);
   };
 
   const removeInfo = (i) => {
     info.splice(i, 1);
-    setNumber(number - 1);
     setInfo([...info]);
   };
-
-  // TODO make remove class btn
 
   // don't render empty array
   if (info.length === 0) return <></>;
 
+  console.log(info);
+
   return (
     <>
       <div className=" class-types-list">
-        {[...Array(number)].map((_, i) => (
+        {[...Array(info.length)].map((_, i) => (
           <div className="class-info" key={i}>
             <div className="row">
               <div className="form__wrap">
@@ -185,8 +183,9 @@ function ClassInfo({ data, onChange }) {
               </div>
             </div>
             <button
+              type="button"
               className="delete-btn clickable"
-              disabled={number < 2}
+              disabled={info.length < 2}
               onClick={() => removeInfo(i)}
             >
               -
@@ -196,6 +195,7 @@ function ClassInfo({ data, onChange }) {
       </div>
       <button
         className="clickable create-flight-form__btn"
+        type="button"
         onClick={handleAdd}
         disabled={!isAvail}
       >

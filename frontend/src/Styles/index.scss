@@ -7,11 +7,11 @@ $bar-height: 40px;
   padding: 0;
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
+  scroll-behavior: smooth;
 }
 
-body,
-html,
 #root {
+  position: relative;
   min-height: 100vh;
 }
 
@@ -58,6 +58,10 @@ button {
 
 .clickable:hover {
   cursor: pointer;
+}
+
+.d-block {
+  display: block;
 }
 
 .link_btn {

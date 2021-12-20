@@ -1,12 +1,14 @@
-import { useContext, useState } from "react";
-import UserContext from "../Context/UserContext";
-import PlaceContext from "../Context/PlaceContext";
+import { useContext, useState, useEffect, useRef } from "react";
 import { ADMIN } from "../Constants/UserEnums";
 import { TYPES } from "../Constants/ClassEnums";
-
-import "../Styles/Components/Home.scss";
-import FlightList from "../Components/FLightList";
 import { getFlights } from "../APIs/FlightAPI";
+import UserContext from "../Context/UserContext";
+import PlaceContext from "../Context/PlaceContext";
+import ToastContext from "../Context/ToastContext";
+import FlightList from "../Components/FLightList";
+import Paging from "../Components/Paging";
+import Loading from "../Components/Loading";
+import "../Styles/Components/Home.scss";
 
 function Home() {
   const [flightNumber, setFligtNumber] = useState("");
@@ -22,19 +24,43 @@ function Home() {
   const [neededSeats, setNeededSeats] = useState({ child: 0, adult: 1 });
   const [isRoundtrip, setIsRoundtrip] = useState(false);
   const [roundDate, setRoundDate] = useState("");
-  // TODO setReturnPage
-  const [returnPage] = useState(1);
+  const [returnPage, setReturnPage] = useState(1);
   const [page, setPage] = useState(1);
+  const [maxPages, setMaxPages] = useState(1);
+  const [maxRPages, setMaxRPages] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   const isValid = flightNumber || from || to || departureDate || classInfo;
 
   const [flights, setFlights] = useState([]);
+  const [returnFLights, setReturnFlights] = useState([]);
+  const [last, setLast] = useState("SEARCH");
+
   const { userData } = useContext(UserContext);
   const { places } = useContext(PlaceContext);
+  const { addToasts } = useContext(ToastContext);
+  const mountedRef = useRef();
 
-  const handleSearch = async (event) => {
-    event.preventDefault();
+  useEffect(() => {
+    if (!mountedRef.current) return;
+    (async () => {
+      await handlePageChange();
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, returnPage]);
 
+  useEffect(() => {
+    mountedRef.current = true;
+  }, []);
+
+  const handlePageChange = async () => {
+    if (last === "ALL") await handleGetAll(false);
+    else await searchFlights(false);
+  };
+
+  const searchFlights = async (resetPage = true) => {
+    console.log("search");
+    setLast("SEARCH");
     try {
       // formate the attributs to filter with
       let attributes = {
@@ -53,32 +79,96 @@ function Home() {
       if (filterWithBaggaeAllwance)
         attributes["baggageAllowanceForAdult"] = baggageAllowance;
 
+      setLoading(true);
       let res = await getFlights(attributes);
 
-      // TODO
       if (res.status !== 200) {
+        setLoading(false);
+        addToasts({
+          type: "danger",
+          heading: "unexpected error",
+        });
+        return;
+      }
+
+      const result = await res.json();
+      console.log(result);
+      setFlights(result.flights);
+      setReturnFlights(result.returnFlights);
+      setMaxPages(result.maxPages);
+      setMaxRPages(result.maxRPages);
+      if (resetPage) {
+        setPage(1);
+        setReturnPage(1);
+      }
+      setLoading(false);
+
+      //show feedback msgs
+      if (result.flights?.length === 0)
+        addToasts({
+          type: "info",
+          body: "no matching results for flights",
+        });
+
+      if (result.returnFLights?.length === 0)
+        addToasts({
+          type: "info",
+          body: "no matching results for return flights",
+        });
+    } catch (err) {
+      setLoading(false);
+      addToasts({
+        type: "danger",
+        heading: "unexpected error",
+      });
+    }
+  };
+
+  const handleSearch = async (event) => {
+    event.preventDefault();
+    await searchFlights();
+  };
+
+  const handleGetAll = async (resetPage = true) => {
+    setLast("ALL");
+    try {
+      setLoading(true);
+      let res = await getFlights({
+        page,
+      });
+
+      if (res.status !== 200) {
+        setLoading(false);
+        addToasts({
+          type: "danger",
+          heading: "unexpected error",
+        });
         return;
       }
 
       const result = await res.json();
       setFlights(result.flights);
-    } catch (err) {
-      //TODO handle err and show msg
-    }
-  };
+      setReturnFlights([]);
+      setMaxPages(result.maxPages);
+      setMaxRPages(0);
+      setLoading(false);
+      if (resetPage) {
+        setPage(1);
+        setReturnPage(1);
+      }
 
-  const handleGetAll = async () => {
-    try {
-      let res = await getFlights({
-        page,
+      //show feedback msgs
+      if (result.flights?.length === 0)
+        addToasts({
+          type: "info",
+          body: "no matching results for flights",
+        });
+    } catch (err) {
+      setLoading(false);
+      addToasts({
+        type: "danger",
+        heading: "unexpected error",
       });
-
-      if (res.status !== 200) return;
-
-      const result = await res.json();
-      setFlights(result.flights);
-    } catch (err) {
-      //TODO handle err and show msg
     }
   };
 
@@ -110,6 +200,7 @@ function Home() {
                 id="form"
                 className="search-form__input"
                 type="text"
+                width="212"
                 value={from}
                 onChange={({ target }) => setFrom(target.value)}
               >
@@ -128,6 +219,7 @@ function Home() {
                 To
               </label>
               <select
+                width="212"
                 id="to"
                 className="search-form__input"
                 type="text"
@@ -191,96 +283,100 @@ function Home() {
             )}
           </div>
           <div className="row">
-            <div className="search-form__input-wrap">
-              <label className="search-form__label" htmlFor="baggage-min">
-                BaggageAllowance
-              </label>
-              <div className="row" style={{ alignItems: "center" }}>
-                <input
-                  id="baggage-allow"
-                  className="search-form__checkbox"
-                  type="checkbox"
-                  value={filterWithBaggaeAllwance}
-                  onChange={({ target }) =>
-                    setFilterWithBaggageAllowance(target.checked)
-                  }
-                ></input>
-                <input
-                  id="baggage-min"
-                  className="search-form__input"
-                  type="number"
-                  value={baggageAllowance.min}
-                  disabled={!filterWithBaggaeAllwance}
-                  onChange={({ target }) =>
-                    setBaggageAllowance((prev) => {
-                      return {
-                        min: target.value,
-                        max: Math.max(prev.max, target.value),
-                      };
-                    })
-                  }
-                ></input>
-                <input
-                  id="baggage-max"
-                  className="search-form__input"
-                  type="number"
-                  value={baggageAllowance.max}
-                  disabled={!filterWithBaggaeAllwance}
-                  onChange={({ target }) =>
-                    setBaggageAllowance((prev) => {
-                      return {
-                        min: Math.min(prev.min, target.value),
-                        max: target.value,
-                      };
-                    })
-                  }
-                ></input>
+            <div className="row">
+              <div className="search-form__input-wrap">
+                <label className="search-form__label" htmlFor="baggage-min">
+                  BaggageAllowance
+                </label>
+                <div className="row" style={{ alignItems: "center" }}>
+                  <input
+                    id="baggage-allow"
+                    className="search-form__checkbox"
+                    type="checkbox"
+                    value={filterWithBaggaeAllwance}
+                    onChange={({ target }) =>
+                      setFilterWithBaggageAllowance(target.checked)
+                    }
+                  ></input>
+                  <input
+                    id="baggage-min"
+                    className="search-form__input number"
+                    type="number"
+                    value={baggageAllowance.min}
+                    disabled={!filterWithBaggaeAllwance}
+                    onChange={({ target }) =>
+                      setBaggageAllowance((prev) => {
+                        return {
+                          min: target.value,
+                          max: Math.max(prev.max, target.value),
+                        };
+                      })
+                    }
+                  ></input>
+                  <input
+                    id="baggage-max"
+                    className="search-form__input number"
+                    type="number"
+                    value={baggageAllowance.max}
+                    disabled={!filterWithBaggaeAllwance}
+                    onChange={({ target }) =>
+                      setBaggageAllowance((prev) => {
+                        return {
+                          min: Math.min(prev.min, target.value),
+                          max: target.value,
+                        };
+                      })
+                    }
+                  ></input>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="row">
-            <div className="search-form__input-wrap">
-              <label className="search-form__label" htmlFor="price-min">
-                Price
-              </label>
-              <div className="row" style={{ alignItems: "center" }}>
-                <input
-                  id="price-allow"
-                  className="search-form__checkbox"
-                  type="checkbox"
-                  value={filterWithPrice}
-                  onChange={({ target }) => setFilterWithPrice(target.checked)}
-                ></input>
-                <input
-                  id="price-min"
-                  className="search-form__input"
-                  type="number"
-                  value={price.min}
-                  disabled={!filterWithPrice}
-                  onChange={({ target }) =>
-                    setPrice((prev) => {
-                      return {
-                        min: target.value,
-                        max: Math.max(prev.max, target.value),
-                      };
-                    })
-                  }
-                ></input>
-                <input
-                  id="price-  max"
-                  className="search-form__input"
-                  type="number"
-                  value={price.max}
-                  disabled={!filterWithPrice}
-                  onChange={({ target }) =>
-                    setPrice((prev) => {
-                      return {
-                        min: Math.min(prev.min, target.value),
-                        max: target.value,
-                      };
-                    })
-                  }
-                ></input>
+            <div className="row">
+              <div className="search-form__input-wrap">
+                <label className="search-form__label" htmlFor="price-min">
+                  Price
+                </label>
+                <div className="row" style={{ alignItems: "center" }}>
+                  <input
+                    id="price-allow"
+                    className="search-form__checkbox"
+                    type="checkbox"
+                    value={filterWithPrice}
+                    onChange={({ target }) =>
+                      setFilterWithPrice(target.checked)
+                    }
+                  ></input>
+                  <input
+                    id="price-min"
+                    className="search-form__input number"
+                    type="number"
+                    value={price.min}
+                    disabled={!filterWithPrice}
+                    onChange={({ target }) =>
+                      setPrice((prev) => {
+                        return {
+                          min: target.value,
+                          max: Math.max(prev.max, target.value),
+                        };
+                      })
+                    }
+                  ></input>
+                  <input
+                    id="price-  max"
+                    className="search-form__input number"
+                    type="number"
+                    value={price.max}
+                    disabled={!filterWithPrice}
+                    onChange={({ target }) =>
+                      setPrice((prev) => {
+                        return {
+                          min: Math.min(prev.min, target.value),
+                          max: target.value,
+                        };
+                      })
+                    }
+                  ></input>
+                </div>
               </div>
             </div>
           </div>
@@ -291,8 +387,9 @@ function Home() {
               </label>
               <div className="row">
                 <input
-                  className="search-form__input"
+                  className="search-form__input number"
                   id="seats-adult"
+                  title="adult"
                   type="number"
                   value={neededSeats.adult}
                   min="1"
@@ -304,8 +401,9 @@ function Home() {
                   }
                 />
                 <input
-                  className="search-form__input"
+                  className="search-form__input number"
                   id="seats-child"
+                  title="child"
                   type="number"
                   value={neededSeats.child}
                   min="0"
@@ -318,42 +416,28 @@ function Home() {
                 />
               </div>
             </div>
-          </div>
-          <div className="row">
+
             <div className="search-form__input-wrap">
               <label className="search-form__label" htmlFor="select-class">
                 Class
               </label>
-              <select
-                className="search-form__select"
-                id="select-class"
-                value={classInfo}
-                onChange={({ target }) => setClassInfo(target.value)}
-              >
-                <option value="" disabled hidden>
-                  Choose A Class
-                </option>
-                {TYPES.map((t, i) => (
-                  <option vlaue={t} key={i}>
-                    {t}
+              <div className="row">
+                <select
+                  className="search-form__select"
+                  id="select-class"
+                  value={classInfo}
+                  onChange={({ target }) => setClassInfo(target.value)}
+                >
+                  <option value="" disabled hidden>
+                    Choose A Class
                   </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="row">
-            <div className="search-form__input-wrap">
-              <label className="search-form__label" htmlFor="page">
-                Page
-              </label>
-              <input
-                className="search-form__input"
-                id="page"
-                type="number"
-                value={page}
-                min="1"
-                onChange={({ target }) => setPage(Number(target.value))}
-              />
+                  {TYPES.map((t, i) => (
+                    <option vlaue={t} key={i}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
           <div className="row bottom together">
@@ -367,6 +451,7 @@ function Home() {
             {userData?.role === ADMIN ? (
               <button
                 className="search-form__submit clickable"
+                type="button"
                 onClick={handleGetAll}
               >
                 Get ALL
@@ -374,8 +459,30 @@ function Home() {
             ) : null}
           </div>
         </div>
+        {loading && !flights.length && <Loading />}
       </form>
-      <FlightList flights={[...flights]} />
+      {flights.length ? (
+        <>
+          <FlightList flights={[...flights]} loading={loading} />
+          <Paging
+            pageNumber={page}
+            onInc={() => setPage((prev) => prev + 1)}
+            onDec={() => setPage((prev) => prev - 1)}
+            nextA={page < maxPages}
+          />
+        </>
+      ) : null}
+      {returnFLights.length ? (
+        <>
+          <FlightList flights={[...returnFLights]} oading={loading} />
+          <Paging
+            pageNumber={returnPage}
+            onInc={() => setReturnPage((prev) => prev + 1)}
+            onDec={() => setReturnPage((prev) => prev - 1)}
+            nextA={page < maxRPages}
+          />
+        </>
+      ) : null}
     </div>
   );
 }
