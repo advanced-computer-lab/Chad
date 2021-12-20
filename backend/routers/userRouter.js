@@ -26,38 +26,61 @@ userRouter.get('/user-info', async (req, res) => {
   }
 });
 
-userRouter.post('/user', async (req, res) => {
+userRouter.put('/user', async (req, res) => {
   try {
-    let user = await User.create(req.body);
+    const userId = req.userData.id;
 
-    res.status(200).json({
-      success: true,
-      msg: 'user created',
-      user,
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      msg: 'error creating user',
-      err,
-    });
-  }
-});
-userRouter.put('/user/:userId', async (req, res) => {
-  try {
-    const userId = req.params.userId;
-
-    const newData = sanatizeData(req.body);
+    var newData = sanatizeData(req.body);
     if (newData['password'] != null) {
-      newData['password'] = await bcrypt.hash(user.password, 10);
+      delete newData['password'];
     }
-    const user = await User.updateOne({ userId }, { $set: newData });
+    const user = await User.updateOne({ _id: userId }, { $set: newData });
 
+    if (!user['acknowledged']) {
+      throw 'database problem';
+    }
     res.status(200).json({
       success: true,
       msg: 'user updated',
       user,
     });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      msg: 'error updating user',
+      err,
+    });
+  }
+});
+
+userRouter.put('/user/change-password', async (req, res) => {
+  try {
+    const userId = req.userData.id;
+
+    var newData = sanatizeData(req.body);
+    if (newData['oldPassword'] != null && newData['newPassword'] != null) {
+      let user = await User.findOne({ _id: userId });
+      let valid = await bcrypt.compare(newData['oldPassword'], user.password);
+
+      if (valid) {
+        let data = {};
+        data['password'] = await bcrypt.hash(newData['newPassword'], 10);
+        let userResponse = await User.updateOne(
+          { _id: userId },
+          { $set: data }
+        );
+        if (!userResponse['acknowledged']) {
+          throw 'database problem';
+        }
+        res.status(200).json({
+          success: true,
+          msg: 'user updated',
+          user,
+        });
+      } else {
+        throw 'wrong old password';
+      }
+    }
   } catch (err) {
     res.status(500).json({
       success: false,

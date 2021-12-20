@@ -47,7 +47,7 @@ authRouter.post('/auth', async (req, res) => {
 });
 
 authRouter.post('/register', async (req, res) => {
-  const { user } = req.body;
+  const user = req.body;
   if (!user) {
     res.status(400).json({
       success: false,
