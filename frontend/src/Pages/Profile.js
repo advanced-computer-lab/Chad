@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ADMIN } from "../Constants/UserEnums";
 import { getUserInfo, updateUserInfo } from "../APIs/UserAPI";
 import { getReservations, deleteTicket } from "../APIs/ReservationAPI";
@@ -241,7 +241,7 @@ function Profile() {
             <div className="reservation-list">
               {loadingReservations && <Loading />}
               {reservations.map((r, i) => (
-                <>
+                <React.Fragment key={i}>
                   {r.tickets.length ? (
                     <div key={i} className="reservation">
                       <div className="res__date">
@@ -310,7 +310,7 @@ function Profile() {
                       </div>
                     </div>
                   ) : null}
-                </>
+                </React.Fragment>
               ))}
             </div>
             {reservations.length ? (

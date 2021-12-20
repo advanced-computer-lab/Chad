@@ -16,6 +16,10 @@ function AppBar() {
     history.push("/");
   };
 
+  // hide from login and signup;
+  if (["login", "register"].some((name) => location.pathname.includes(name)))
+    return null;
+
   return (
     <div className="app-bar">
       <h2 className="app-bar__logo logo">
