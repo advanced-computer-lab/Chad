@@ -21,6 +21,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
       require: true,
     },
+    passport: {
+      type: String,
+      required: true,
+    },
     role: {
       type: String,
       enum: [ADMIN, USER],

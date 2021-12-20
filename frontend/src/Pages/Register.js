@@ -9,6 +9,7 @@ function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passport, setPassport] = useState("");
   const [age, setAge] = useState("");
   const [mobile, setMobile] = useState("");
   const [animateClass, setAnimateClass] = useState("animate");
@@ -21,7 +22,7 @@ function Register() {
 
   const history = useHistory();
 
-  const isValid = name && email && password && age && mobile;
+  const isValid = name && email && password && age && mobile && passport;
 
   const onSubmit = async (event) => {
     event.preventDefault();
@@ -33,6 +34,7 @@ function Register() {
         password,
         age,
         mobile,
+        passport,
       });
 
       const data = await res.json();
@@ -46,6 +48,10 @@ function Register() {
 
       // redirect to login
       history.push("/login");
+      addToasts({
+        body: "account create successfully",
+        type: "success",
+      });
     } catch (err) {
       addToasts({
         body: "unexpected error",
@@ -100,6 +106,20 @@ function Register() {
                 value={password}
                 type="password"
                 onChange={({ target }) => setPassword(target.value)}
+                required
+              />
+            </div>
+            <div className="reg-form__wrap">
+              <label htmlFor="passport" className="reg-form__label">
+                Passport Number
+              </label>
+              <input
+                className="reg-form__input"
+                name="passport"
+                id="passport"
+                value={passport}
+                type="text"
+                onChange={({ target }) => setPassport(target.value)}
                 required
               />
             </div>

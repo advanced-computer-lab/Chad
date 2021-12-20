@@ -1,8 +1,9 @@
 .flight-list {
   display: flex;
   align-items: center;
-  width: 90%;
-  margin: 20px 0px;
+  max-width: 90%;
+  width: min-content;
+  margin: 20px auto;
   padding: 20px;
   border-radius: 10px;
   overflow-x: scroll;
