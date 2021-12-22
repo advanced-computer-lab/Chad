@@ -89,7 +89,6 @@ userRouter.put('/user/change-password', async (req, res) => {
     });
   }
 });
-
 userRouter.delete('/user/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;

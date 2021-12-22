@@ -245,15 +245,13 @@ router.put('/reservation/:reservationId', async (req, res) => {
         let isChild = ticket.isChild;
         let isChildOld = ticket.isChildOld;
         //if the seat is already reserved
-        console.log(newSeat, 'HERE');
-        console.log(classIndex);
+
         if (
           flight.classInfo[classIndex].reserverdSeats.includes(newSeat) ||
           !flight.classInfo[classIndex].availabelAdultsSeats
         ) {
           throw new Error('Seat is already reserved');
         }
-        console.log('HERE');
         //remove old seat and reserve the new seat
         flight.classInfo[classIndex].reserverdSeats.push(newSeat);
         const index =
