@@ -183,12 +183,117 @@ router.post('/reservation', async (req, res) => {
   }
 });
 
+/*
+ "_id": "61c25564b703c422b570a1d6",
+            "tickets": [
+                {
+                    "_id": "61c25563b703c422b570a1d1",
+                    "ticketNumber": "cf7da2c3c647",
+                    "flightNumber": "FN1",
+                    "departure": "2021-12-03T05:24:00.000Z",
+                    "arrival": "2021-12-03T01:24:00.000Z",
+                    "departureLocation": {
+                        "_id": "61a28ae654e0e34ec732b4cc",
+                        "name": "YYZ",
+                        "createdAt": "2021-11-27T19:45:42.338Z",
+                        "updatedAt": "2021-11-27T19:45:42.338Z",
+                        "__v": 0
+                    },
+                    "arrivalLocation": {
+                        "_id": "61a28ae654e0e34ec732b4d0",
+                        "name": "LHR",
+                        "createdAt": "2021-11-27T19:45:42.339Z",
+                        "updatedAt": "2021-11-27T19:45:42.339Z",
+                        "__v": 0
+                    },
+                    "userId": "61c0aa02cc23a94b11f65f7c",
+                    "price": 10,
+                    "seatNumber": 3,
+                    "classType": "economy",
+                    "isChild": false,
+                    "date": "2021-12-21T22:29:55.336Z",
+                    "paid": true,
+                    "createdAt": "2021-12-21T22:29:55.893Z",
+                    "updatedAt": "2021-12-21T22:29:55.893Z",
+                    "__v": 0
+                },
+*/
+
 router.put('/reservation/:reservationId', async (req, res) => {
   try {
     const _id = req.params.reservationId;
     // remove unmodified data
     // TODO : implement sanatizeData
     const newData = sanatizeData(req.body);
+    // console.log(newData['tickets']);
+    for (let { ticket } of newData['tickets']) {
+      // console.log(ticket._id);
+      let flight = await Flight.findOne({ flightNumber: ticket._id });
+      // console.log(flight);
+      let classIndex = ticket.newClass;
+      //console.log(ticket.newClass, 'XXX');
+      flight.classInfo.forEach(({ Type }, i) => {
+        if (Type === ticket.newClass) classIndex = i;
+      });
+
+      for (let i = 0; i < newData['tickets'].length; i++) {
+        // let ticket = { ticket };
+        let newSeat = ticket.newSeat;
+        let oldSeat = ticket.oldSeat;
+        let oldPrice = ticket.oldPrice;
+        let price = ticket.newPrice;
+        let isChild = ticket.isChild;
+        let isChildOld = ticket.isChildOld;
+        //if the seat is already reserved
+        console.log(newSeat, 'HERE');
+        console.log(classIndex);
+        if (
+          flight.classInfo[classIndex].reserverdSeats.includes(newSeat) ||
+          !flight.classInfo[classIndex].availabelAdultsSeats
+        ) {
+          throw new Error('Seat is already reserved');
+        }
+        console.log('HERE');
+        //remove old seat and reserve the new seat
+        flight.classInfo[classIndex].reserverdSeats.push(newSeat);
+        const index =
+          flight.classInfo[classIndex].reserverdSeats.indexOf(oldSeat);
+        if (index > -1) {
+          flight.classInfo[classIndex].reserverdSeats.splice(index, 1);
+        }
+
+        if (isChild) {
+          flight.classInfo[classIndex].availabelAdultsSeats--;
+          flight.classInfo[classIndex].availabelChildrenSeats--;
+        } else {
+          flight.classInfo[classIndex].availabelAdultsSeats--;
+          flight.classInfo[classIndex].availabelChildrenSeats = Math.min(
+            flight.classInfo[classIndex].availabelAdultsSeats,
+            flight.classInfo[classIndex].availabelChildrenSeats
+          );
+        }
+        //check this logic
+        //reversing the operation of reserving a seat
+        if (isChildOld) {
+          flight.classInfo[classIndex].availabelAdultsSeats++;
+          flight.classInfo[classIndex].availabelChildrenSeats++;
+        } else {
+          flight.classInfo[classIndex].availabelAdultsSeats++;
+          flight.classInfo[classIndex].availabelChildrenSeats = Math.min(
+            flight.classInfo[classIndex].availabelAdultsSeats,
+            flight.classInfo[classIndex].availabelChildrenSeats
+          );
+        }
+        if (price != oldPrice) console.log('CHANGE IN PRICE');
+        await flight.save();
+        let result = await Ticket.updateOne(
+          { _id: ticket._id },
+          { newSeat, isChild, price }
+        );
+        console.log(result);
+      }
+    }
+
     const reservation = await Reservation.updateOne({ _id }, { $set: newData });
 
     res.status(200).json({
