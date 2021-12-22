@@ -8,6 +8,7 @@ import ToastContext from "../Context/ToastContext";
 import FlightList from "../Components/FLightList";
 import Paging from "../Components/Paging";
 import Loading from "../Components/Loading";
+import search from "../Assets/hero.svg";
 import "../Styles/Components/Home.scss";
 
 function Home() {
@@ -174,6 +175,11 @@ function Home() {
 
   return (
     <div className="page home-page">
+      <img
+        src={search}
+        alt="search"
+        style={{ position: "absolute", height: "790px" }}
+      />
       <form className="search-form" onSubmit={handleSearch}>
         <div className="search-form__content">
           <h2 className="search-form__title">Book Your Flight!!</h2>
