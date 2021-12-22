@@ -9,6 +9,8 @@ import Flight from "./Flight";
 import Loading from "./Loading";
 import "../Styles/Components/SelectBag.scss";
 
+export const BASE_URL = process.env.REACT_APP_SERVER_URL;
+
 function SelectBag() {
   const { selectedFlights, setSelectedFlights } = useContext(SelectedFlights);
   const { userData } = useContext(UserContext);
@@ -53,8 +55,7 @@ function SelectBag() {
 
   const handelBook = async () => {
     try {
-      setLoading(true);
-      let tickets = [];
+      let items = [];
 
       // formate the arguments
       for (let flight of selectedFlights) {
@@ -62,39 +63,80 @@ function SelectBag() {
         let _class = _flight.classInfo.filter(
           ({ Type }) => Type === _flight.classType
         )[0];
-        _flight.seats = _flight.selectedSeats.map((sn, i) => ({
-          seatNumber: sn,
-          price:
+        for (var i = 0; i < _flight.selectedSeats.length; ++i) {
+          let price =
             i < _flight.numberOfChild
               ? _class.priceForChild
-              : _class.priceForAdult,
-          isChild: i < _flight.numberOfChild,
-        }));
-        _flight.date = new Date();
-        _flight.departureLocation = _flight.departureLocation._id;
-        _flight.arrivalarrivalLocation = _flight.arrivalLocation._id;
-        delete _flight.selectedSeats;
-        tickets.push(_flight);
+              : _class.priceForAdult;
+          let isChild = i < _flight.numberOfChild;
+          _flight.price = price;
+          _flight.name = flight.name + isChild ? " Child" : " Adult";
+          _flight.quantity = 1;
+          items.push(_flight);
+        }
       }
 
-      let res = await createReservation({ tickets });
+      fetch(`${BASE_URL}/pay`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          // flights data
+          items,
+        }),
+      })
+        .then((res) => {
+          if (res.status == 200) return res.json();
+          return res.json().then((json) => Promise.reject(json));
+        })
+        .then(async ({ url }) => {
+          if (url == "http://localhost:3000/") {
+            setLoading(true);
+            let tickets = [];
 
-      if (res.status !== 200) {
-        addToasts({
-          type: "danger",
-          body: "faild to add reservation",
+            // formate the arguments
+            for (let flight of selectedFlights) {
+              let _flight = { ...flight };
+              let _class = _flight.classInfo.filter(
+                ({ Type }) => Type === _flight.classType
+              )[0];
+              _flight.seats = _flight.selectedSeats.map((sn, i) => ({
+                seatNumber: sn,
+                price:
+                  i < _flight.numberOfChild
+                    ? _class.priceForChild
+                    : _class.priceForAdult,
+                isChild: i < _flight.numberOfChild,
+              }));
+              _flight.date = new Date();
+              _flight.departureLocation = _flight.departureLocation._id;
+              _flight.arrivalarrivalLocation = _flight.arrivalLocation._id;
+              delete _flight.selectedSeats;
+              tickets.push(_flight);
+            }
+
+            let res = await createReservation({ tickets });
+
+            if (res.status !== 200) {
+              addToasts({
+                type: "danger",
+                body: "faild to add reservation",
+              });
+              setLoading(false);
+              return;
+            }
+
+            addToasts({
+              type: "success",
+              body: "reservation added successfully",
+            });
+            setLoading(false);
+            setSelectedFlights([]);
+            setShow(false);
+          }
+          window.location = url;
         });
-        setLoading(false);
-        return;
-      }
-
-      addToasts({
-        type: "success",
-        body: "reservation added successfully",
-      });
-      setLoading(false);
-      setSelectedFlights([]);
-      setShow(false);
     } catch (err) {
       addToasts({
         type: "danger",
