@@ -22,3 +22,14 @@ export async function updateUserInfo(data) {
     body: JSON.stringify(data),
   });
 }
+
+export async function updatePassword(data) {
+  return fetch(`${BASE_URL}/user/change-password`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      token: getSession(),
+    },
+    body: JSON.stringify(data),
+  });
+}

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ADMIN } from "../Constants/UserEnums";
-import { getUserInfo, updateUserInfo } from "../APIs/UserAPI";
+import { getUserInfo, updateUserInfo, updatePassword } from "../APIs/UserAPI";
 import { getReservations, deleteTicket } from "../APIs/ReservationAPI";
 import Loading from "../Components/Loading";
 import Paging from "../Components/Paging";
@@ -11,6 +11,7 @@ function Profile() {
   const [loading, setLoading] = useState(false);
   const [loadingReservations, setLoadingReservations] = useState(false);
   const [editName, setEditName] = useState(false);
+  const [editPassword, setEditPassword] = useState(false);
   const [editEmail, setEditEmail] = useState(false);
   const [changed, setChanged] = useState(false);
   const [reservations, setReservations] = useState([]);
@@ -19,6 +20,8 @@ function Profile() {
   const [role, setRole] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [oldPassword, setOldPassword] = useState("notthepassword:)");
+  const [newPassword, setNewPassword] = useState("");
 
   const { addToasts } = useContext(ToastContext);
 
@@ -160,6 +163,23 @@ function Profile() {
         });
         return;
       }
+      // incase if we want to change the password
+      if (editPassword && newPassword !== oldPassword) {
+        res = await updatePassword({
+          newPassword,
+          oldPassword,
+        });
+
+        if (res.status !== 200) {
+          setLoading(false);
+          addToasts({
+            type: "danger",
+            body: "faild to update password",
+          });
+          return;
+        }
+      }
+
       setLoading(false);
       addToasts({
         type: "success",
@@ -168,6 +188,8 @@ function Profile() {
       setChanged(false);
       setEditEmail(false);
       setEditName(false);
+      setOldPassword("notthepassword:)");
+      setEditPassword(false);
     } catch (err) {
       setLoading(false);
       addToasts({
@@ -229,6 +251,46 @@ function Profile() {
                 >
                   edit
                 </button>
+              </div>
+              <div className="row input__wrap">
+                <input
+                  className="profile__name d-block"
+                  title="old-password"
+                  type="password"
+                  value={oldPassword}
+                  required
+                  disabled={!editPassword}
+                  onChange={({ target }) => {
+                    setChanged(true);
+                    setOldPassword(target.value);
+                  }}
+                />
+                <button
+                  type="button"
+                  className="edit-btn clickable"
+                  onClick={() => {
+                    setEditPassword(true);
+                    setOldPassword("");
+                  }}
+                >
+                  edit
+                </button>
+              </div>
+              <div className="row input__wrap">
+                {editPassword && (
+                  <input
+                    className="profile__name d-block"
+                    title="new-password"
+                    type="password"
+                    value={newPassword}
+                    required
+                    disabled={!editPassword}
+                    onChange={({ target }) => {
+                      setChanged(true);
+                      setNewPassword(target.value);
+                    }}
+                  />
+                )}
               </div>
               {role === ADMIN ? <p className="profile__role">{role}</p> : null}
             </div>
