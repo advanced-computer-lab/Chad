@@ -3,8 +3,10 @@ import { ADMIN } from "../Constants/UserEnums";
 import { getUserInfo, updateUserInfo, updatePassword } from "../APIs/UserAPI";
 import { getReservations, deleteTicket } from "../APIs/ReservationAPI";
 import Loading from "../Components/Loading";
+import EditTicket from "../Components/EditTicket";
 import Paging from "../Components/Paging";
 import ToastContext from "../Context/ToastContext";
+import edit from "../Assets/edit.svg";
 import "../Styles/Components/Profile.scss";
 
 function Profile() {
@@ -14,6 +16,8 @@ function Profile() {
   const [editPassword, setEditPassword] = useState(false);
   const [editEmail, setEditEmail] = useState(false);
   const [changed, setChanged] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
+  const [editData, setEditData] = useState(null);
   const [reservations, setReservations] = useState([]);
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState(1);
@@ -199,6 +203,11 @@ function Profile() {
     }
   };
 
+  const handleEditTicket = (ticket) => {
+    setEditData(ticket);
+    setShowEdit(true);
+  };
+
   return (
     <div className="profile" style={{ position: "relative" }}>
       {loading ? (
@@ -367,6 +376,13 @@ function Profile() {
                             >
                               x
                             </button>
+                            <button
+                              type="button"
+                              className="edit-btn clickable"
+                              onClick={() => handleEditTicket(t)}
+                            >
+                              <img src={edit} alt="edit" />
+                            </button>
                           </div>
                         ))}
                       </div>
@@ -385,6 +401,9 @@ function Profile() {
             ) : null}
           </div>
         </>
+      )}
+      {showEdit && (
+        <EditTicket onExit={() => setShowEdit(false)} data={editData} />
       )}
     </div>
   );
