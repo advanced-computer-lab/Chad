@@ -85,7 +85,9 @@
     .profile-btn {
       width: 45px;
       height: 45px;
-      background: #222;
+      background: url("../../Assets/chad.jpeg");
+      background-position: center center;
+      background-size: contain;
       border-radius: 50%;
       margin: auto 10px;
     }

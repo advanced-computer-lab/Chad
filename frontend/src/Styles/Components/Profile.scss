@@ -13,9 +13,11 @@
     align-items: center;
 
     .img {
-      width: 100px;
-      height: 100px;
-      background-color: gray;
+      width: 150px;
+      height: 150px;
+      background: url("../../Assets/chad.jpeg");
+      background-size: cover;
+      background-position: center center;
       border-radius: 50%;
     }
   }
