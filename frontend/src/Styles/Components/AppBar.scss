@@ -106,6 +106,7 @@
       background-color: white;
       flex-direction: column;
       box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+      z-index: 12;
 
       & > * + * {
         margin-top: 10px;
