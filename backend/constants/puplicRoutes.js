@@ -20,8 +20,4 @@ module.exports = [
     path: '/place',
     methods: ['GET'],
   },
-  {
-    path: '/user/:userId',
-    methods: ['PUT'],
-  },
 ];

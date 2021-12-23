@@ -37,7 +37,8 @@ function SelectBag() {
       total += numberOfChild * priceForChild + numberOfAdult * priceForAdult;
     }
 
-    setToPay(payStr.join(", ") + ` = ${total.toFixed(2)}`);
+    // setToPay(payStr.join(", ") + ` = ${total.toFixed(2)}`);
+    setToPay(`${total.toFixed(2)} $`);
   }, [selectedFlights]);
 
   const handelShow = () => {
@@ -116,7 +117,7 @@ function SelectBag() {
       ></div>
       <div className={`select-bag ${show ? "show-bag" : ""}`}>
         {show && loading && <Loading />}
-        <div className="row">
+        <div className="row cards">
           {selectedFlights.map((f, i) => (
             <Flight
               key={i}
@@ -127,6 +128,83 @@ function SelectBag() {
               onRemove={handelRemove}
             />
           ))}
+        </div>
+        <div className="ticket">
+          <div className="body">
+            <h3>
+              CHAD <span>Airlines</span>
+            </h3>
+            <div style={{ display: "flex", height: "100%" }}>
+              {selectedFlights.map((flight, i) => (
+                <div className="ticket-cont" key={i}>
+                  <div className="row">
+                    <p className="flight-n">
+                      <strong># {flight?.flightNumber}</strong>
+                    </p>
+                  </div>
+                  <div className="row">
+                    <div>
+                      <p>
+                        <strong>AirPort</strong>
+                      </p>
+                      {flight?.departureLocation.name}
+                    </div>
+                    <div>
+                      <p>
+                        <strong>Dst. AirPort</strong>
+                      </p>
+                      {flight?.arrivalLocation.name}
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div>
+                      <p>
+                        <strong>DATE & TIME</strong>
+                      </p>
+                      {flight?.departure}
+                    </div>
+                    <div>
+                      <p>
+                        <strong>Dst. DATE & TIME</strong>
+                      </p>
+                      {flight?.arrival}
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div style={{ width: "100%" }}>
+                      <p>
+                        <strong>Seats</strong>
+                      </p>
+                      {flight?.selectedSeats.map((s, i) => (
+                        <div className="seat" key={i}>
+                          {s}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div>
+                      <p>
+                        <strong>Adults</strong>
+                      </p>
+                      {flight?.numberOfAdult}
+                    </div>
+                    {!!flight?.numberOfChild && (
+                      <div>
+                        <p>
+                          <strong>Childrens</strong>
+                        </p>
+                        {flight?.numberOfChild}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="tail">
+            <p className="pay-amount">{toPay}</p>
+          </div>
         </div>
         {selectedFlights.length ? (
           <button className="show clickable" onClick={handelShow}>

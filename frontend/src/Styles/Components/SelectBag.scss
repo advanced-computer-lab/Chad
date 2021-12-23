@@ -30,14 +30,141 @@
     font-size: 18px;
     border-radius: 21px;
   }
+  .ticket {
+    display: none;
+  }
 
   &.show-bag {
     width: 100%;
-    height: 400px;
+    height: 550px;
     bottom: 0;
     left: 0;
     padding: 12px;
-    background-color: rgb(10, 164, 211);
+    // background-color: rgb(10, 164, 211);
+
+    .cards {
+      display: none;
+    }
+
+    .ticket {
+      display: flex;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      height: 380px;
+
+      .body {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 80%;
+        padding: 20px;
+        border-radius: 10px;
+        background: white;
+        // background: url("../../Assets/plane.svg"), no-repeat, white;
+        // background-position: center left;
+        // background-size: cover;
+        // background-repeat: no-repeat;
+
+        h3 {
+          font-size: 30px;
+          margin-bottom: 10px;
+          &::first-letter {
+            font-size: 45px;
+          }
+
+          text-shadow: 2px 3px 1px #fe0094;
+        }
+
+        .seat {
+          display: inline-block;
+          color: white;
+          background-color: #0b31ec;
+          min-width: 30px;
+          width: min-content;
+          padding: 4px;
+          border-radius: 5px;
+          text-align: center;
+
+          & + * {
+            margin-left: 4px;
+          }
+        }
+      }
+
+      .tail {
+        height: 100%;
+        width: 19%;
+        border-radius: 10px;
+        background-color: white;
+        border-left: 3px dashed black;
+        position: relative;
+        overflow: hidden;
+
+        .pay-amount {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 100%;
+          text-align: center;
+          z-index: 4;
+          transform: translate(-50%, -50%);
+          font-weight: bold;
+          font-size: 25px;
+        }
+
+        &::after {
+          content: "";
+          position: absolute;
+          top: -147px;
+          left: -20px;
+          background: #0b31ec;
+          width: 100%;
+          height: 350px;
+          transform: rotateZ(60deg);
+        }
+
+        &::before {
+          content: "";
+          position: absolute;
+          left: 57px;
+          bottom: -147px;
+          background: #fe0094;
+          width: 100%;
+          height: 350px;
+          transform: rotateZ(60deg);
+        }
+      }
+    }
+
+    .ticket-cont {
+      width: 50%;
+      height: 100%;
+
+      .flight-n {
+        font-size: 22px;
+        text-shadow: 2px 3px 1px #0b31ec;
+      }
+
+      & + * {
+        border-left: 1px dashed gray;
+      }
+
+      .row {
+        width: 100%;
+        justify-content: space-between;
+        padding: 0 10px;
+
+        & > div {
+          width: 50%;
+        }
+      }
+
+      .row + .row {
+        margin-top: 10px;
+      }
+    }
 
     .row {
       justify-content: center;
@@ -64,16 +191,18 @@
   }
 
   button.book-btn {
-    padding: 4px 8px;
+    padding: 8px 16px;
     border-radius: 5px;
     font-size: 18px;
+    color: white;
+    background-color: rgb(10, 164, 211);
   }
 }
 
 .selected-bag__overlay.show-overlay {
   position: fixed;
   top: 0;
-  bottom: 300px;
+  bottom: 0;
   width: 100%;
   background-color: rgba(0, 0, 0, 0.8);
 }

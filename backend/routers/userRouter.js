@@ -5,7 +5,7 @@ const userRouter = new Router();
 
 // remove the fields that cannot be modified
 const sanatizeData = (data) => {
-  ['role', '_id'].forEach((f) => delete data[f]);
+  ['role', '_id', 'password'].forEach((f) => delete data[f]);
   return data;
 };
 
@@ -28,17 +28,12 @@ userRouter.get('/user-info', async (req, res) => {
 
 userRouter.put('/user', async (req, res) => {
   try {
-    const userId = req.userData.id;
+    const _id = req.userData.id;
 
     var newData = sanatizeData(req.body);
-    if (newData['password'] != null) {
-      delete newData['password'];
-    }
-    const user = await User.updateOne({ _id: userId }, { $set: newData });
 
-    if (!user['acknowledged']) {
-      throw 'database problem';
-    }
+    const user = await User.updateOne({ _id }, { $set: newData });
+
     res.status(200).json({
       success: true,
       msg: 'user updated',
@@ -55,44 +50,43 @@ userRouter.put('/user', async (req, res) => {
 
 userRouter.put('/user/change-password', async (req, res) => {
   try {
-    const userId = req.userData.id;
+    const _id = req.userData.id;
 
-    var newData = sanatizeData(req.body);
+    var newData = req.body;
+
     if (newData['oldPassword'] != null && newData['newPassword'] != null) {
-      let user = await User.findOne({ _id: userId });
+      let user = await User.findOne({ _id });
       let valid = await bcrypt.compare(newData['oldPassword'], user.password);
 
       if (valid) {
         let data = {};
         data['password'] = await bcrypt.hash(newData['newPassword'], 10);
-        let userResponse = await User.updateOne(
-          { _id: userId },
-          { $set: data }
-        );
-        if (!userResponse['acknowledged']) {
-          throw 'database problem';
-        }
+        await User.updateOne({ _id }, { $set: data });
+
         res.status(200).json({
           success: true,
           msg: 'user updated',
           user,
         });
       } else {
-        throw 'wrong old password';
+        throw new Error('wrong old password');
       }
+    } else {
+      throw new Error('bad body request');
     }
   } catch (err) {
     res.status(500).json({
       success: false,
       msg: 'error updating user',
-      err,
+      err: err.message,
     });
   }
 });
-userRouter.delete('/user/:userId', async (req, res) => {
+
+userRouter.delete('/user', async (req, res) => {
   try {
-    const userId = req.params.userId;
-    const result = await User.deleteOne({ userId });
+    const _id = req.userData.id;
+    const result = await User.deleteOne({ _id });
     res.status(200).json({
       success: true,
       msg: 'user deleted',
