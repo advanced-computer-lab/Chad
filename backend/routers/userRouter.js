@@ -71,20 +71,22 @@ userRouter.put('/user/change-password', async (req, res) => {
       } else {
         throw new Error('wrong old password');
       }
+    } else {
+      throw new Error('bad body request');
     }
   } catch (err) {
     res.status(500).json({
       success: false,
       msg: 'error updating user',
-      err,
+      err: err.message,
     });
   }
 });
 
-userRouter.delete('/user/:userId', async (req, res) => {
+userRouter.delete('/user', async (req, res) => {
   try {
-    const userId = req.params.userId;
-    const result = await User.deleteOne({ userId });
+    const _id = req.userData.id;
+    const result = await User.deleteOne({ _id });
     res.status(200).json({
       success: true,
       msg: 'user deleted',
