@@ -6,7 +6,7 @@ const sendMail = require('../controllers/mailSender');
 const User = require('../models/UserModel');
 const Flight = require('../models/flightModel');
 const { ADMIN } = require('../constants/userEnum');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
 //TODO : reimplement sanatizeData
 const sanatizeData = (data) => {
   ['creatorId', '_id'].forEach((f) => delete data[f]);
@@ -88,22 +88,14 @@ router.put('/ticket/:ticketId', async (req, res) => {
 
 router.delete('/ticket/:ticketId', async (req, res) => {
   try {
-    //TODO get the charge PID from ticket / reservation model whatever you want
-
     let permission = false;
     let deletedTickets = [];
     let { email } = await User.findOne({ _id: req.userData.id });
 
     const _id = req.params.ticketId;
-    const { flightNumber, paymentId } = await Ticket.findById(_id);
+    const { flightNumber } = await Ticket.findById(_id);
     let reservation = null;
-    //to handle the objects with no paymentId attribute
-    let refund = { amount: 0 };
-    if (paymentId) {
-      refund = await stripe.refunds.create({
-        charge: paymentId,
-      });
-    }
+
     if (req.userData.role === ADMIN) {
       reservation = await Reservation.findOne({ tickets: _id });
     } else {
@@ -154,12 +146,7 @@ router.delete('/ticket/:ticketId', async (req, res) => {
         } else {
           await Reservation.findOneAndDelete(reservation);
         }
-        await sendMail(
-          email,
-          'Cancel ticket',
-          `You canceled your ticket`,
-          `amount refunded: ${refund.amount}`
-        );
+        await sendMail(email, 'Cancel ticket', `You canceled your ticket`);
       } else {
         for (let ticketId of reservation.tickets) {
           let _ticket = await Ticket.findOneAndDelete({ _id: ticketId });
