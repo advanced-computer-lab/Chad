@@ -47,7 +47,8 @@ authRouter.post('/auth', async (req, res) => {
 });
 
 authRouter.post('/register', async (req, res) => {
-  const user = req.body;
+  const { user } = req.body;
+
   if (!user) {
     res.status(400).json({
       success: false,
@@ -62,6 +63,7 @@ authRouter.post('/register', async (req, res) => {
   // insert the user into the db
   try {
     const result = await User.findOne({ email: user.email });
+
     if (result) {
       res.status(200).json({
         success: false,
@@ -69,6 +71,7 @@ authRouter.post('/register', async (req, res) => {
       });
     } else {
       await User.addUser(user);
+
       res.status(200).json({
         success: true,
         msg: 'ok',

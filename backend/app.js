@@ -57,3 +57,4 @@ app.use(ticketRouter);
 app.listen(PORT, () => {
   log(`[LOG] app is up and running at http://localhost:${PORT}`);
 });
+module.exports = app;
