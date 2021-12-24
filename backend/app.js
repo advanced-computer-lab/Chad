@@ -12,7 +12,7 @@ const flightRouter = require('./routers/flightRouter');
 const placeRouter = require('./routers/placeRouter');
 const ticketRouter = require('./routers/ticketRouter');
 const reservationRouter = require('./routers/reservationRouter');
-
+const forgetPasswordRouter=require('./routers/forgetPasswordRouter')
 // GLOCAL OBJECTS
 const { log } = console;
 
@@ -45,6 +45,7 @@ app.use(
 // add routes&controllers
 app.use(authController);
 app.use(authRouter);
+app.use(forgetPasswordRouter);
 app.use(searchRouter);
 app.use(userRouter);
 app.use(placeRouter);

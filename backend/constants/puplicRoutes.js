@@ -9,6 +9,10 @@ module.exports = [
     methods: ['POST'],
   },
   {
+    path: '/forgetPassword',
+    methods: ['POST'],
+  },
+  {
     path: '/flight',
     methods: ['GET'],
   },
