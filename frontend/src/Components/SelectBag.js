@@ -6,6 +6,7 @@ import UserContext from "../Context/UserContext";
 import SelectedFlights from "../Context/SelectedFlights";
 import ToastContext from "../Context/ToastContext";
 import Flight from "./Flight";
+import Pay from "./Pay";
 import Loading from "./Loading";
 import "../Styles/Components/SelectBag.scss";
 
@@ -38,7 +39,7 @@ function SelectBag() {
     }
 
     // setToPay(payStr.join(", ") + ` = ${total.toFixed(2)}`);
-    setToPay(`${total.toFixed(2)} $`);
+    setToPay(`${total.toFixed(2)}`);
   }, [selectedFlights]);
 
   const handelShow = () => {
@@ -52,7 +53,7 @@ function SelectBag() {
     removeFromLS("FLIGHTSTOBOOK");
   };
 
-  const handelBook = async () => {
+  const handelBook = async (token) => {
     try {
       setLoading(true);
       let tickets = [];
@@ -78,7 +79,7 @@ function SelectBag() {
         tickets.push(_flight);
       }
 
-      let res = await createReservation({ tickets });
+      let res = await createReservation({ tickets, token });
 
       if (res.status !== 200) {
         addToasts({
@@ -203,7 +204,7 @@ function SelectBag() {
             </div>
           </div>
           <div className="tail">
-            <p className="pay-amount">{toPay}</p>
+            <p className="pay-amount">{toPay} $</p>
           </div>
         </div>
         {selectedFlights.length ? (
@@ -213,18 +214,22 @@ function SelectBag() {
         ) : (
           ""
         )}
-        {show && (
+        {false && (
           <div className="price">
-            TOTAL TO PAY:{" "}
-            <strong style={{ color: "white" }}>{toPay} EGP</strong>
+            TOTAL TO PAY:
+            <strong style={{ color: "white" }}>{toPay} $</strong>
           </div>
         )}
         {show && (
           <div className="row book-div">
             {isAuth ? (
-              <button className="clickable book-btn" onClick={handelBook}>
-                Book
-              </button>
+              <Pay
+                onToken={handelBook}
+                name="Enter your Card Info"
+                amount={Number(toPay)}
+              >
+                <button className="clickable book-btn">Book</button>
+              </Pay>
             ) : (
               <button
                 className="clickable book-btn"

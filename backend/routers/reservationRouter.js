@@ -108,31 +108,37 @@ router.get('/reservation/:reservationId', async (req, res) => {
   }
 });
 
-async function makePayment(price, email) {
-  //TODO handle try catch and do whatever additional logic here
-  //TODO IMPORTANT we need to save charges.pid in ticket model to be able to make refunds
-  const customer = await stripe.customers.create({
-    email: email,
-    source: 'tok_amex',
-  });
+async function makePayment(price, email, token) {
   const charges = await stripe.charges.create({
-    amount: price,
+    amount: price * 100,
     currency: 'usd',
-    customer: customer.id,
+    receipt_email: email,
+    source: token.id,
   });
   return [charges.paid, charges.id];
 }
 
 router.post('/reservation', async (req, res) => {
   try {
-    let { email } = await User.findOne({ _id: req.userData.id });
+    const { email } = await User.findOne({ _id: req.userData.id });
+    const { token } = await req.body;
     const tickets = [];
+
+    let totalPrice = req.body.tickets.reduce(
+      (acc, { seats }) =>
+        acc + seats.reduce((acc, { price }) => acc + price, 0),
+      0
+    );
+    const [isPaid, paymentId] = await makePayment(totalPrice, email, token);
+    if (!isPaid) {
+      throw new Error('payment not success');
+    }
+
     for (let ticket of req.body.tickets) {
       let _flight = await Flight.findOne({ _id: ticket._id });
-      let class_idx;
-      _flight.classInfo.forEach(({ Type }, i) => {
-        if (Type === ticket.classType) class_idx = i;
-      });
+      let class_idx = _flight.classInfo.findIndex(
+        ({ Type }) => Type === ticket.classType
+      );
       for (let { seatNumber, price, isChild } of ticket.seats) {
         // if the seat is already there throw an error
         if (
@@ -155,8 +161,7 @@ router.post('/reservation', async (req, res) => {
           );
         }
         await _flight.save();
-        const paymentResult = await makePayment(price, email);
-        const [isPaid, paymentId] = paymentResult;
+
         if (!isPaid)
           res.status(500).json({
             success: false,
@@ -168,7 +173,6 @@ router.post('/reservation', async (req, res) => {
           isChild,
           price,
           paymentId: paymentId,
-          // ?set this true for now
           paid: isPaid,
           // GENERATE UNIQUE TICKET NUMBERS
           ticketNumber: crypto.randomBytes(6).toString('hex'),
@@ -200,28 +204,7 @@ router.post('/reservation', async (req, res) => {
       reservation,
     });
   } catch (err) {
-    res.status(500).json({
-      success: false,
-      msg: 'some db err',
-      err,
-    });
-  }
-});
-
-router.put('/reservation/:reservationId', async (req, res) => {
-  try {
-    const _id = req.params.reservationId;
-    // remove unmodified data
-    // TODO : implement sanatizeData
-    const newData = sanatizeData(req.body);
-    const reservation = await Reservation.updateOne({ _id }, { $set: newData });
-
-    res.status(200).json({
-      success: true,
-      msg: 'ok',
-      reservation,
-    });
-  } catch (err) {
+    console.log(err);
     res.status(500).json({
       success: false,
       msg: 'some db err',
