@@ -5,16 +5,10 @@ const Ticket = require('../models/TicketModel');
 const User = require('../models/UserModel');
 const Flight = require('../models/flightModel');
 const sendMail = require('../controllers/mailSender');
-const { USER } = require('../constants/userEnum');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-// const uuid = require('uuid');
-const router = express.Router();
+const { USER } = require('../constants/userEnum');
 
-//TODO : reimplement sanatizeData
-const sanatizeData = (data) => {
-  ['creatorId', '_id'].forEach((f) => delete data[f]);
-  return data;
-};
+const router = express.Router();
 
 router.get('/reservations/:page', async (req, res) => {
   try {
@@ -204,7 +198,6 @@ router.post('/reservation', async (req, res) => {
       reservation,
     });
   } catch (err) {
-    console.log(err);
     res.status(500).json({
       success: false,
       msg: 'some db err',
@@ -216,32 +209,35 @@ router.post('/reservation', async (req, res) => {
 router.delete('/reservation/:reservationId', async (req, res) => {
   try {
     const _id = req.params.reservationId;
-    let result = {};
+    let reservation;
     let { email } = await User.findOne({ _id: req.userData.id });
 
     if (req.userData.role === USER) {
-      result = await Reservation.findOneAndDelete({
+      reservation = await Reservation.findOneAndDelete({
         _id,
         userId: req.userData.id,
       });
     } else {
-      result = await Reservation.findOneAndDelete({ _id });
+      reservation = await Reservation.findOneAndDelete({ _id });
     }
-    if (result)
-      for (let ticket of result.tickets) {
-        await Ticket.findOneAndDelete({ _id: ticket });
+    if (reservation)
+      for (let ticket of reservation.tickets) {
+        await Ticket.deleteTicket(ticket);
       }
+    else {
+      throw new Error("you can't perform this action");
+    }
 
     await sendMail(
       email,
-      'Cancel reservation',
-      'you have cancelled your reservation'
+      'Reservation Cancelled',
+      'your reservation have been cancelled'
     );
 
     res.status(200).json({
       success: true,
       msg: 'ok',
-      result,
+      reservation,
     });
   } catch (err) {
     res.status(500).json({

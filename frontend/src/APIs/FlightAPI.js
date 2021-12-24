@@ -15,7 +15,6 @@ export async function addFlight(data) {
 }
 
 export async function getFlights(data) {
-  console.log(data);
   return await fetch(`${BASE_URL}/search-flights`, {
     method: "POST",
     headers: {
@@ -23,6 +22,17 @@ export async function getFlights(data) {
       token: getSession(),
     },
     body: JSON.stringify({ attributes: data }),
+  });
+}
+
+export async function getFlightwithFN(flightNumber) {
+  return await fetch(`${BASE_URL}/search-flights`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      token: getSession(),
+    },
+    body: JSON.stringify({ attributes: { flightNumber } }),
   });
 }
 
