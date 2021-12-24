@@ -95,13 +95,14 @@ router.delete('/ticket/:ticketId', async (req, res) => {
     let { email } = await User.findOne({ _id: req.userData.id });
 
     const _id = req.params.ticketId;
-    const { flightNumber, paymentId } = await Ticket.findById(_id);
+    const { flightNumber, paymentId ,price} = await Ticket.findById(_id);
     let reservation = null;
     //to handle the objects with no paymentId attribute
     let refund = { amount: 0 };
     if (paymentId) {
       refund = await stripe.refunds.create({
         charge: paymentId,
+        amount:price*100,
       });
     }
     if (req.userData.role === ADMIN) {

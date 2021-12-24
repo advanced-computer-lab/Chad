@@ -235,14 +235,21 @@ router.delete('/reservation/:reservationId', async (req, res) => {
     const _id = req.params.reservationId;
     let result = {};
     let { email } = await User.findOne({ _id: req.userData.id });
+    let refund = { amount: 0 };
 
     if (req.userData.role === USER) {
-      result = await Reservation.findOneAndDelete({
+      result = await Reservation.findOne({
         _id,
         userId: req.userData.id,
-      });
+      }).populate('tickets');
+      let{ paymentId }=result.tickets[0];
+      if (paymentId) {
+        refund = await stripe.refunds.create({
+          charge: paymentId,
+        });
+      }
     } else {
-      result = await Reservation.findOneAndDelete({ _id });
+      result = await Reservation.findOne({ _id }).populate('tickets');
     }
     if (result)
       for (let ticket of result.tickets) {
@@ -252,13 +259,14 @@ router.delete('/reservation/:reservationId', async (req, res) => {
     await sendMail(
       email,
       'Cancel reservation',
-      'you have cancelled your reservation'
+      `amount refunded: ${refund.amount}`
     );
 
     res.status(200).json({
       success: true,
       msg: 'ok',
       result,
+      refund,
     });
   } catch (err) {
     res.status(500).json({
