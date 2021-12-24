@@ -175,6 +175,7 @@
           margin: 0 2px;
         }
 
+        .edit-btn,
         .cancel-btn {
           position: absolute;
           background-color: white;
@@ -190,8 +191,18 @@
           align-items: center;
         }
 
+        .edit-btn {
+          right: 30px;
+        }
+
+        &:hover .edit-btn,
         &:hover .cancel-btn {
           display: flex;
+        }
+
+        .edit-btn:hover,
+        .cancel-btn:hover {
+          border: 1px solid #444;
         }
       }
     }

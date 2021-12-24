@@ -79,7 +79,7 @@ const addOneDay = (dateString) => {
 
 // remove any none word character
 const sanatizeText = (str) => {
-  return str.replaceAll(/\W/g, '');
+  return str.replaceAll(/[^a-zA-Z0-9\\-]/g, '');
 };
 
 const formAttributes = (attributes) => {
