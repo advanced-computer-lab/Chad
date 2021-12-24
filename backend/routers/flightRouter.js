@@ -5,6 +5,7 @@ const Flight = require('../models/flightModel');
 const Ticket = require('../models/TicketModel');
 const Reservation = require('../models/ReservationModel');
 const sendMail = require('../controllers/mailSender');
+const { makeRefund } = require('../utils/paymentUtils');
 
 // remove the fields that cannot be modified
 const sanatizeData = (data) => {
@@ -136,12 +137,6 @@ router.put('/flight/:flightId', async (req, res) => {
         );
       }
     }
-    // console.log(changedFields);
-    // res.status(200).json({
-    //   success: true,
-    //   msg: 'ok',
-    // });
-    // return;
 
     const flight = await Flight.updateOne({ _id }, { $set: newData });
 
@@ -151,7 +146,6 @@ router.put('/flight/:flightId', async (req, res) => {
       flight,
     });
   } catch (err) {
-    console.log(err);
     res.status(500).json({
       success: false,
       msg: 'some db err',
@@ -167,8 +161,9 @@ router.delete('/flight/:flightId', async (req, res) => {
     const result = await Flight.findOneAndDelete({ _id });
     const tickets = await Ticket.find({
       flightNumber: result.flightNumber,
-    }).select('_id');
-    for (let ticketId of tickets) {
+    });
+    for (let { _id: ticketId, price, paymentId } of tickets) {
+      if (paymentId) await makeRefund(price, paymentId);
       const reservation = await Reservation.findOne({
         tickets: ticketId,
       }).populate('userId');

@@ -1,31 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const Ticket = require('../models/TicketModel');
-const Reservation = require('../models/ReservationModel');
 const sendMail = require('../controllers/mailSender');
 const User = require('../models/UserModel');
 const Flight = require('../models/flightModel');
+const { makePayment, makeRefund } = require('../utils/paymentUtils');
 const { ADMIN } = require('../constants/userEnum');
-
-const sanatizeData = (data) => {
-  [
-    '_id',
-    'ticketNumber',
-    'flightNumber',
-    'departure',
-    'arrival',
-    'departureLocation',
-    'arrivalLocation',
-    'userId',
-    'price',
-    'isChild',
-    'date',
-    'paid',
-  ].forEach((f) => delete data[f]);
-  return data;
-};
-
-const objEqual = (obj1, obj2) => JSON.stringify(obj1) === JSON.stringify(obj2);
 
 //get req to view all the tickets
 router.get('/tickets/:page', async (req, res) => {
@@ -80,13 +60,35 @@ router.get('/ticket/:ticketId', async (req, res) => {
 
 router.put('/ticket/:ticketId', async (req, res) => {
   try {
+    let { email } = await User.findOne({ _id: req.userData.id });
     const _id = req.params.ticketId;
-    const data = req.body;
-    // TODO check if there any money that should be returned or requested
-    // TODO send mails
+    const { seatNumber, classType, token } = req.body;
+
+    const _ticket = await Ticket.findOne({ _id });
+    const _flight = await Flight.findOne({
+      flightNumber: _ticket.flightNumber,
+    });
+
+    // check if there any refund or needed money
+    const classIdx = _flight.classInfo.findIndex(
+      ({ Type }) => Type == classType
+    );
+    let oldPrice = _ticket.price,
+      newPrice = _ticket.isChild
+        ? _flight.classInfo[classIdx].priceForChild
+        : _flight.classInfo[classIdx].priceForAdult;
+
+    if (oldPrice < newPrice && !token?.id) {
+      throw new Error('invald action');
+    } else if (oldPrice < newPrice) {
+      makePayment(newPrice - oldPrice, email, token);
+    } else if (oldPrice > newPrice) {
+      makeRefund(oldPrice - newPrice, _ticket.paymentId);
+    }
+
     const ticket = await Ticket.updateSeat(_id, {
-      seatNumber: data.seatNumber,
-      classType: data.classType,
+      seatNumber,
+      classType,
     });
 
     res.status(200).json({
@@ -107,9 +109,10 @@ router.put('/ticket/:ticketId', async (req, res) => {
 router.delete('/ticket/:ticketId', async (req, res) => {
   try {
     const _id = req.params.ticketId;
-    const { flightNumber } = await Ticket.findById(_id);
+    const { flightNumber, price, paymentId } = await Ticket.findById(_id);
     let { email } = await User.findOne({ _id: req.userData.id });
 
+    await makeRefund(price, paymentId);
     let deletedTicket = await Ticket.deleteTicket(_id);
 
     await sendMail(

@@ -1,9 +1,10 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { deleteFlight } from "../APIs/FlightAPI";
 import { ADMIN } from "../Constants/UserEnums";
 import ToastContext from "../Context/ToastContext";
 import UserContext from "../Context/UserContext";
+import Loading from "../Components/Loading";
 import "../Styles/Components/Flight.scss";
 
 function Flight({
@@ -17,6 +18,7 @@ function Flight({
   onRemove,
   choosen,
 }) {
+  const [loading, setLoading] = useState(false);
   const { userData } = useContext(UserContext);
   const { addToasts } = useContext(ToastContext);
   const history = useHistory();
@@ -24,8 +26,10 @@ function Flight({
   const handleDeleteFlight = async () => {
     if (!window.confirm("are you sure ?")) return;
     try {
+      setLoading(true);
       let res = await deleteFlight(data._id);
       if (res.status !== 200) {
+        setLoading(false);
         addToasts({
           type: "danger",
           body: "error deleting flight",
@@ -34,11 +38,13 @@ function Flight({
       }
 
       onDelete && onDelete(idx);
+      setLoading(false);
       addToasts({
         type: "success",
         body: "deleted successfully",
       });
     } catch (err) {
+      setLoading(false);
       addToasts({
         type: "danger",
         body: "unexpected error",
@@ -64,6 +70,7 @@ function Flight({
       }`}
       onClick={addToSelected}
     >
+      {loading && <Loading />}
       {editable && userData.role === ADMIN && (
         <div className="edit-delete">
           <button className="clickable" onClick={handleDeleteFlight}>
