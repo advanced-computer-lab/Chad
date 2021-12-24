@@ -51,13 +51,14 @@ UserSchema.statics.addUser = async function (user) {
 // check if the login credentials are valid
 UserSchema.statics.checkUser = async function ({ email, password }) {
   let user = await this.findOne({ email: email });
-  let validPass = await bcrypt.compare(password, user.password);
+  let validPass = await bcrypt.compare(password, user.password),
+    validTempPass = false;
+  let validDate = user.expirationDate >= new Date();
 
-  let validTempPass = await bcrypt.compare(password, user.tempPassword);
+  if (user.tempPassword)
+    validTempPass = await bcrypt.compare(password, user.tempPassword);
 
-  let validDate=(user.expirationDate >= new Date());
-
-  if (!validPass && !(validTempPass&&validDate)) return null;
+  if (!validPass && !(validTempPass && validDate)) return null;
 
   return { ...user._doc, password: 'hi' };
 };

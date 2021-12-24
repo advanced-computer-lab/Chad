@@ -43,6 +43,7 @@ function Login() {
       let jsonData = await res.json();
 
       if (!jsonData.success) {
+        console.log(jsonData);
         addToasts({
           body: "invalid usermail or password",
           type: "danger",
