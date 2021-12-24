@@ -1,16 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { TYPES } from "../Constants/ClassEnums";
 import { getFlightwithFN } from "../APIs/FlightAPI";
+import { editTicket } from "../APIs/TicketAPI";
 import Loading from "./Loading";
+import ToastContext from "../Context/ToastContext";
 import "../Styles/Components/EditTicket.scss";
 
 function EditTicket({ onExit, data }) {
   const {
+    _id,
     classType: _type,
     isChild,
     seatNumber,
     flightNumber,
   } = data || {
+    _id: null,
     classType: null,
     flightNumber: 0,
     isChild: false,
@@ -21,30 +25,82 @@ function EditTicket({ onExit, data }) {
   const [classType, setClassType] = useState(_type);
   const [loading, setLoading] = useState(false);
 
+  const { addToasts } = useContext(ToastContext);
+
+  const classIdx = classInfo.findIndex(({ Type }) => Type === classType);
+  const isValid = classIdx !== -1;
+  console.log(isValid);
+
   useEffect(() => {
     (async () => {
-      setLoading(true);
-      let res = await getFlightwithFN(flightNumber);
+      try {
+        setLoading(true);
+        let res = await getFlightwithFN(flightNumber);
 
-      if (res.status !== 200) {
-        console.log(await res.json());
-        //TODO error Msg
+        if (res.status !== 200) {
+          setLoading(false);
+          onExit();
+          addToasts({
+            type: "danger",
+            body: "faild to load flight data",
+          });
+          return;
+        }
+
+        let data = await res.json();
+        if (data.success) {
+          const { flights } = data;
+          setClassInfo(flights[0].classInfo);
+        } else {
+          onExit();
+          addToasts({
+            type: "danger",
+            body: "faild to load flight data",
+          });
+        }
         setLoading(false);
-
-        return;
+      } catch (err) {
+        setLoading(false);
+        onExit();
+        addToasts({
+          type: "danger",
+          body: "unexpected error",
+        });
       }
-
-      let data = await res.json();
-      if (data.success) {
-        const { flights } = data;
-        setClassInfo(flights[0].classInfo);
-      }
-      setLoading(false);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleEdit = () => {};
+  const handleEdit = async () => {
+    try {
+      setLoading(true);
+      let res = await editTicket(_id, { classType, seatNumber: selectedSeat });
+      let data = await res.json();
+
+      if (res.status !== 200 || !data?.success) {
+        setLoading(false);
+        onExit();
+        addToasts({
+          type: "danger",
+          body: "error editing the ticket",
+        });
+        return;
+      }
+      addToasts({
+        type: "success",
+        body: "ticket edited successfully",
+      });
+      onExit();
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      onExit();
+      addToasts({
+        type: "danger",
+        body: "unexpected errors",
+      });
+    }
+  };
 
   return (
     <>
@@ -163,7 +219,11 @@ function EditTicket({ onExit, data }) {
             ))}
         </div>
         <div className="row">
-          <button className="continue-btn clickable" onClick={handleEdit}>
+          <button
+            disabled={!isValid}
+            className="continue-btn clickable"
+            onClick={handleEdit}
+          >
             Edit
           </button>
         </div>
