@@ -6,9 +6,7 @@ const User = require('../models/UserModel');
 const Flight = require('../models/flightModel');
 const sendMail = require('../controllers/mailSender');
 const { USER } = require('../constants/userEnum');
-const stripe = require('stripe')(
-  'sk_test_51K7yQbHzMRw1OlaDIJ5ncNimeLrpygHJZ5adZZ23LxLaCTyxJ8nQQS0iGrSbc9ipwWxDC5ibJOnQK3UCzeK2LPZv004K4FN79G'
-);
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 // const uuid = require('uuid');
 const router = express.Router();
 

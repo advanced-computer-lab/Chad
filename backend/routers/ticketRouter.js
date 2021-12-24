@@ -6,9 +6,7 @@ const sendMail = require('../controllers/mailSender');
 const User = require('../models/UserModel');
 const Flight = require('../models/flightModel');
 const { ADMIN } = require('../constants/userEnum');
-const stripe = require('stripe')(
-  'sk_test_51K7yQbHzMRw1OlaDIJ5ncNimeLrpygHJZ5adZZ23LxLaCTyxJ8nQQS0iGrSbc9ipwWxDC5ibJOnQK3UCzeK2LPZv004K4FN79G'
-);
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 //TODO : reimplement sanatizeData
 const sanatizeData = (data) => {
   ['creatorId', '_id'].forEach((f) => delete data[f]);
