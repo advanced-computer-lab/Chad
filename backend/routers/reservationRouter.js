@@ -6,7 +6,8 @@ const User = require('../models/UserModel');
 const Flight = require('../models/flightModel');
 const sendMail = require('../controllers/mailSender');
 const { USER } = require('../constants/userEnum');
-
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+// const uuid = require('uuid');
 const router = express.Router();
 
 //TODO : reimplement sanatizeData
@@ -107,8 +108,24 @@ router.get('/reservation/:reservationId', async (req, res) => {
   }
 });
 
+async function makePayment(price, email) {
+  //TODO handle try catch and do whatever additional logic here
+  //TODO IMPORTANT we need to save charges.pid in ticket model to be able to make refunds
+  const customer = await stripe.customers.create({
+    email: email,
+    source: 'tok_amex',
+  });
+  const charges = await stripe.charges.create({
+    amount: price,
+    currency: 'usd',
+    customer: customer.id,
+  });
+  return [charges.paid, charges.id];
+}
+
 router.post('/reservation', async (req, res) => {
   try {
+    let { email } = await User.findOne({ _id: req.userData.id });
     const tickets = [];
     for (let ticket of req.body.tickets) {
       let _flight = await Flight.findOne({ _id: ticket._id });
@@ -138,13 +155,21 @@ router.post('/reservation', async (req, res) => {
           );
         }
         await _flight.save();
+        const paymentResult = await makePayment(price, email);
+        const [isPaid, paymentId] = paymentResult;
+        if (!isPaid)
+          res.status(500).json({
+            success: false,
+            msg: 'Could not process payment',
+          });
 
         let result = await Ticket.create({
           seatNumber,
           isChild,
           price,
+          paymentId: paymentId,
           // ?set this true for now
-          paid: true,
+          paid: isPaid,
           // GENERATE UNIQUE TICKET NUMBERS
           ticketNumber: crypto.randomBytes(6).toString('hex'),
           userId: req.userData.id,
