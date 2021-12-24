@@ -5,8 +5,8 @@ const Ticket = require('../models/TicketModel');
 const User = require('../models/UserModel');
 const Flight = require('../models/flightModel');
 const sendMail = require('../controllers/mailSender');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { USER } = require('../constants/userEnum');
+const { makePayment, makeRefund } = require('../utils/paymentUtils.js');
 
 const router = express.Router();
 
@@ -102,16 +102,6 @@ router.get('/reservation/:reservationId', async (req, res) => {
   }
 });
 
-async function makePayment(price, email, token) {
-  const charges = await stripe.charges.create({
-    amount: price * 100,
-    currency: 'usd',
-    receipt_email: email,
-    source: token.id,
-  });
-  return [charges.paid, charges.id];
-}
-
 router.post('/reservation', async (req, res) => {
   try {
     const { email } = await User.findOne({ _id: req.userData.id });
@@ -155,12 +145,6 @@ router.post('/reservation', async (req, res) => {
           );
         }
         await _flight.save();
-
-        if (!isPaid)
-          res.status(500).json({
-            success: false,
-            msg: 'Could not process payment',
-          });
 
         let result = await Ticket.create({
           seatNumber,
@@ -218,13 +202,21 @@ router.delete('/reservation/:reservationId', async (req, res) => {
         userId: req.userData.id,
       });
     } else {
-      reservation = await Reservation.findOneAndDelete({ _id });
+      reservation = await Reservation.findOneAndDelete({ _id }).populate(
+        'tickets'
+      );
     }
-    if (reservation)
+
+    if (reservation) {
+      let totalPrice = reservation.tickets.reduce(
+        (acc, { price }) => acc + price,
+        0
+      );
+      await makeRefund(totalPrice, reservation.tickets[0].paymentId);
       for (let ticket of reservation.tickets) {
-        await Ticket.deleteTicket(ticket);
+        await Ticket.deleteTicket(ticket._id);
       }
-    else {
+    } else {
       throw new Error("you can't perform this action");
     }
 
