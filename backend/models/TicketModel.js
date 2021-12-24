@@ -56,6 +56,10 @@ const TicketSchema = new mongoose.Schema(
       type: Boolean,
       required: true,
     },
+    paymentId: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );

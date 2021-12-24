@@ -120,7 +120,7 @@ async function makePayment(price, email) {
     currency: 'usd',
     customer: customer.id,
   });
-  return charges.paid;
+  return [charges.paid, charges.id];
 }
 
 router.post('/reservation', async (req, res) => {
@@ -155,17 +155,19 @@ router.post('/reservation', async (req, res) => {
           );
         }
         await _flight.save();
-        const isPaid = await makePayment(price, email);
+        const paymentResult = await makePayment(price, email);
+        const [isPaid, paymentId] = paymentResult;
         if (!isPaid)
           res.status(500).json({
             success: false,
             msg: 'Could not process payment',
           });
-        // const charge = await stripe.charges.retrieve(pid);
+
         let result = await Ticket.create({
           seatNumber,
           isChild,
           price,
+          paymentId: paymentId,
           // ?set this true for now
           paid: isPaid,
           // GENERATE UNIQUE TICKET NUMBERS

@@ -89,18 +89,21 @@ router.put('/ticket/:ticketId', async (req, res) => {
 router.delete('/ticket/:ticketId', async (req, res) => {
   try {
     //TODO get the charge PID from ticket / reservation model whatever you want
-    const paymentId = 'ch_3KA2g2HzMRw1OlaD1unDA6OQ';
-    const refund = await stripe.refunds.create({
-      charge: paymentId,
-    });
+
     let permission = false;
     let deletedTickets = [];
     let { email } = await User.findOne({ _id: req.userData.id });
 
     const _id = req.params.ticketId;
-    const { flightNumber } = await Ticket.findById(_id);
+    const { flightNumber, paymentId } = await Ticket.findById(_id);
     let reservation = null;
-
+    //to handle the objects with no paymentId attribute
+    let refund = { amount: 0 };
+    if (paymentId) {
+      refund = await stripe.refunds.create({
+        charge: paymentId,
+      });
+    }
     if (req.userData.role === ADMIN) {
       reservation = await Reservation.findOne({ tickets: _id });
     } else {
