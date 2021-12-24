@@ -98,4 +98,38 @@ TicketSchema.statics.deleteTicket = async function (ticketId) {
   return { ..._ticket._doc };
 };
 
+TicketSchema.statics.updateSeat = async function (id, data) {
+  const { seatNumber, classType } = data;
+  let _ticket = await this.findOne({ _id: id });
+  // if there is no change
+  if (_ticket.classType == classType && _ticket.seatNumber == seatNumber)
+    return { ..._ticket._doc };
+
+  let _flight = await Flight.findOne({ flightNumber: _ticket.flightNumber });
+  let oldClassIdx = _flight.classInfo.findIndex(
+      ({ Type }) => Type === _ticket.classType
+    ),
+    newClassIdx = _flight.classInfo.findIndex(({ Type }) => Type === classType);
+
+  // if there is any wrong data
+  if (
+    newClassIdx == -1 ||
+    _flight.classInfo[newClassIdx].reserverdSeats.includes(seatNumber)
+  )
+    throw new Error("the seat can't be changed");
+
+  // perform the updates
+  _flight.classInfo[oldClassIdx].reserverdSeats = _flight.classInfo[
+    oldClassIdx
+  ].reserverdSeats.filter((sn) => sn !== _ticket.seatNumber);
+  _flight.classInfo[newClassIdx].reserverdSeats.push(seatNumber);
+  _ticket.classType = classType;
+  _ticket.seatNumber = seatNumber;
+
+  await _flight.save();
+  await _ticket.save();
+
+  return { ..._ticket._doc };
+};
+
 module.exports = mongoose.model('Ticket', TicketSchema);

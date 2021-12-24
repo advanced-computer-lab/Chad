@@ -9,12 +9,6 @@ const { USER } = require('../constants/userEnum');
 
 const router = express.Router();
 
-//TODO : reimplement sanatizeData
-const sanatizeData = (data) => {
-  ['creatorId', '_id'].forEach((f) => delete data[f]);
-  return data;
-};
-
 router.get('/reservations/:page', async (req, res) => {
   try {
     let page = Number(req.params.page);
@@ -186,21 +180,24 @@ router.post('/reservation', async (req, res) => {
 router.delete('/reservation/:reservationId', async (req, res) => {
   try {
     const _id = req.params.reservationId;
-    let result = {};
+    let reservation;
     let { email } = await User.findOne({ _id: req.userData.id });
 
     if (req.userData.role === USER) {
-      result = await Reservation.findOneAndDelete({
+      reservation = await Reservation.findOneAndDelete({
         _id,
         userId: req.userData.id,
       });
     } else {
-      result = await Reservation.findOneAndDelete({ _id });
+      reservation = await Reservation.findOneAndDelete({ _id });
     }
-    if (result)
-      for (let ticket of result.tickets) {
-        await Ticket.findOneAndDelete({ _id: ticket });
+    if (reservation)
+      for (let ticket of reservation.tickets) {
+        await Ticket.deleteTicket(ticket);
       }
+    else {
+      throw new Error("you can't perform this action");
+    }
 
     await sendMail(
       email,
@@ -211,7 +208,7 @@ router.delete('/reservation/:reservationId', async (req, res) => {
     res.status(200).json({
       success: true,
       msg: 'ok',
-      result,
+      reservation,
     });
   } catch (err) {
     res.status(500).json({

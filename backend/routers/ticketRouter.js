@@ -81,10 +81,13 @@ router.get('/ticket/:ticketId', async (req, res) => {
 router.put('/ticket/:ticketId', async (req, res) => {
   try {
     const _id = req.params.ticketId;
-    // remove unmodified data
-    const newData = sanatizeData(req.body);
+    const data = req.body;
     // TODO check if there any money that should be returned or requested
-    const ticket = await Ticket.updateOne({ _id }, { $set: newData });
+    // TODO send mails
+    const ticket = await Ticket.updateSeat(_id, {
+      seatNumber: data.seatNumber,
+      classType: data.classType,
+    });
 
     res.status(200).json({
       success: true,
@@ -96,6 +99,7 @@ router.put('/ticket/:ticketId', async (req, res) => {
       success: false,
       msg: 'some db err',
       err,
+      errMsg: err.message,
     });
   }
 });
@@ -120,7 +124,6 @@ router.delete('/ticket/:ticketId', async (req, res) => {
       deletedTicket,
     });
   } catch (err) {
-    console.log(err);
     res.status(500).json({
       success: false,
       msg: 'some db err',
