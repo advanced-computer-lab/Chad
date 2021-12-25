@@ -89,6 +89,7 @@ router.put('/ticket/:ticketId', async (req, res) => {
     const ticket = await Ticket.updateSeat(_id, {
       seatNumber,
       classType,
+      price: newPrice,
     });
 
     res.status(200).json({

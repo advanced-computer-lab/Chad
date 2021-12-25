@@ -206,6 +206,9 @@ function SelectBag() {
           <div className="tail">
             <p className="pay-amount">{toPay} $</p>
           </div>
+          <button className="close-btn" onClick={handelShow}>
+            x
+          </button>
         </div>
         {selectedFlights.length ? (
           <button className="show clickable" onClick={handelShow}>

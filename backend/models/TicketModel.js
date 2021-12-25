@@ -129,6 +129,7 @@ TicketSchema.statics.updateSeat = async function (id, data) {
   _flight.classInfo[newClassIdx].reserverdSeats.push(seatNumber);
   _ticket.classType = classType;
   _ticket.seatNumber = seatNumber;
+  if (data.price) _ticket.price = Number(data.price);
 
   await _flight.save();
   await _ticket.save();

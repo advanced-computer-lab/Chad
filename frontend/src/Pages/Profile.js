@@ -414,7 +414,11 @@ function Profile() {
         </>
       )}
       {showEdit && (
-        <EditTicket onExit={() => setShowEdit(false)} data={editData} />
+        <EditTicket
+          onExit={() => setShowEdit(false)}
+          data={editData}
+          onDoneEdit={async () => await updateResr()}
+        />
       )}
     </div>
   );
