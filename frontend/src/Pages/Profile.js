@@ -120,7 +120,6 @@ function Profile() {
   };
 
   const handleCancelReservations = async (id) => {
-    // console.log(id);
     if (!window.confirm("are you sure you want to cancel the ticket")) return;
     try {
       setLoadingReservations(true);
@@ -168,10 +167,10 @@ function Profile() {
         return;
       }
       // incase if we want to change the password
-      if (editPassword && newPassword !== oldPassword) {
+      if (editPassword && newPassword.trim() !== oldPassword.trim()) {
         res = await updatePassword({
-          newPassword,
-          oldPassword,
+          newPassword: newPassword.trim(),
+          oldPassword: oldPassword.trim(),
         });
 
         if (res.status !== 200) {

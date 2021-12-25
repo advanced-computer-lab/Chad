@@ -64,8 +64,10 @@
   top: 50%;
   left: 70%;
   height: 450px;
+  min-width: 350px;
   transform: translate(-50%, -50%);
   border-radius: 5px;
+  z-index: 12;
   box-shadow: 2px 2px 18px rgba(0, 0, 0, 0.1);
 
   .login-form__h2 {
@@ -134,5 +136,23 @@
 
   .login-form__btn + * {
     margin-left: 40px;
+  }
+}
+
+@media (max-width: 1470px) {
+  .page.login {
+    img {
+      width: 530px;
+      left: 8%;
+    }
+  }
+}
+
+@media (max-width: 1120) {
+  .page.login {
+    img {
+      width: 430px;
+      left: 6%;
+    }
   }
 }

@@ -11,7 +11,6 @@ function SelectFLightInfo({ show, onClose }) {
   const { addToasts } = useContext(ToastContext);
 
   const { classInfo } = selectedFlight || { classInfo: "" };
-  // console.log(selectedFlight, classInfo, classInfo[0]?.Type);
 
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [classType, setClassType] = useState(classInfo[0]?.Type);
@@ -19,8 +18,6 @@ function SelectFLightInfo({ show, onClose }) {
   const [numberOfChild, setNumberOfChild] = useState(0);
 
   if (!selectedFlight) return <></>;
-
-  console.log(classInfo);
 
   const selectSeat = (seatNumber) => {
     if (!selectedSeats.includes(seatNumber)) {
@@ -70,7 +67,6 @@ function SelectFLightInfo({ show, onClose }) {
       return;
     }
 
-    console.log(selectedFlights);
     setSelectedFlights([
       ...selectedFlights.filter(
         ({ flightNumber }) => flightNumber !== flightToBook.flightNumber

@@ -29,8 +29,6 @@ function EditTicket({ onExit, data }) {
   const [newPrice, setNewPrice] = useState(price);
   const [loading, setLoading] = useState(false);
 
-  // console.log(classInfo);
-
   const { addToasts } = useContext(ToastContext);
 
   const classIdx = classInfo.findIndex(({ Type }) => Type === classType);

@@ -15,7 +15,8 @@ function Register() {
   const [animateClass, setAnimateClass] = useState("animate");
 
   useEffect(() => {
-    setTimeout(() => setAnimateClass(""), 1000);
+    let id = setTimeout(() => setAnimateClass(""), 1000);
+    return () => clearTimeout(id);
   }, []);
 
   const { addToasts } = useContext(ToastContext);

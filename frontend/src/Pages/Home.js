@@ -60,7 +60,6 @@ function Home() {
   };
 
   const searchFlights = async (resetPage = true) => {
-    console.log("search");
     setLast("SEARCH");
     try {
       // formate the attributs to filter with
@@ -93,7 +92,6 @@ function Home() {
       }
 
       const result = await res.json();
-      console.log(result);
       setFlights(result.flights);
       setReturnFlights(result.returnFlights);
       setMaxPages(result.maxPages);

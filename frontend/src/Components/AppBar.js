@@ -23,8 +23,16 @@ function AppBar() {
     history.push("/");
   };
 
+  console.log(location.pathname);
   // hide from login and signup;
-  if (["login", "register"].some((name) => location.pathname.includes(name)))
+  if (
+    ["/login", "/register", "/forgot-password"].some(
+      (name) => location.pathname === name
+    ) ||
+    !["/profile", "/", "/edit-flight", "/create-flight"].some(
+      (name) => location.pathname === name
+    )
+  )
     return null;
 
   return (
