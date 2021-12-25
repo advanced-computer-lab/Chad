@@ -82,7 +82,7 @@ we have implemented all the requirements, and we added the forgot password funct
 ## API Reference
 we implemented the backend using the __REST pattern__ so for each functionality there is/are endpoint/s to fulfill it.
 
-*Backend Public Endpoints Reference*
+### *Backend Public Endpoints Reference*
 
 *__Note__:* default Response body would always contain `{success: Boolean, msg: String}` 
 |Endpoint |Type | Request | Response|
@@ -94,7 +94,7 @@ we implemented the backend using the __REST pattern__ so for each functionality 
 |`/search-flights`|POST|body: `{attributes: Object}`| body `{flights: Array, returnFlights: Array, maxPages: Number, maxRPages: Number}`|
 |`/place` | GET|body: `{}` | body: `{places: Array}`
 
-*Backend Private Reference*
+### *Backend Private Reference*
 
 *__Note__:* any Request should have in its headers a field `token: String` with token returned from `/auth`
 |Endpoint |Type | Request | Response|
