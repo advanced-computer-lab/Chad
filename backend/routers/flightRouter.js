@@ -171,7 +171,7 @@ router.delete('/flight/:flightId', async (req, res) => {
         await sendMail(
           reservation.userId.email,
           'Flight canceled',
-          `Your flight ${result.flightNumber} has been canceled `
+          `Your flight ${result.flightNumber} has been canceled and the payment ${price}$ has been refunded `
         );
         let remainingTickets = reservation.tickets.filter(
           (id) => !tickets.some(({ _id }) => _id.equals(id))

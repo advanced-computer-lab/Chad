@@ -184,7 +184,7 @@ function Home() {
           <div className="row">
             <div className="search-form__input-wrap">
               <label htmlFor="fn" className="search-form__label">
-                Flight Number
+                <strong>Flight Number</strong>
               </label>
               <input
                 id="fn"
@@ -198,7 +198,7 @@ function Home() {
           <div className="row">
             <div className="search-form__input-wrap">
               <label htmlFor="from" className="search-form__label">
-                From
+                <strong>From</strong>
               </label>
               <select
                 id="form"
@@ -220,7 +220,7 @@ function Home() {
             </div>
             <div className="search-form__input-wrap">
               <label htmlFor="to" className="search-form__label">
-                To
+                <strong>To</strong>
               </label>
               <select
                 width="212"
@@ -264,7 +264,9 @@ function Home() {
               className="search-form__input-wrap"
               style={{ paddingTop: "0px" }}
             >
-              <label className="search-form__label">Departure Date</label>
+              <label className="search-form__label">
+                <strong>Departure Date</strong>
+              </label>
               <input
                 id="d-date"
                 className="search-form__input"
@@ -275,7 +277,9 @@ function Home() {
             </div>
             {isRoundtrip && (
               <div className="search-form__input-wrap">
-                <label className="search-form__label">Return Date</label>
+                <label className="search-form__label">
+                  <strong>Return Date</strong>
+                </label>
                 <input
                   id="r-date"
                   className="search-form__input"
@@ -290,7 +294,7 @@ function Home() {
             <div className="row">
               <div className="search-form__input-wrap">
                 <label className="search-form__label" htmlFor="baggage-min">
-                  BaggageAllowance
+                  <strong>BaggageAllowance</strong>
                 </label>
                 <div className="row" style={{ alignItems: "center" }}>
                   <input
@@ -338,7 +342,7 @@ function Home() {
             <div className="row">
               <div className="search-form__input-wrap">
                 <label className="search-form__label" htmlFor="price-min">
-                  Price
+                  <strong>Price</strong>
                 </label>
                 <div className="row" style={{ alignItems: "center" }}>
                   <input
@@ -387,43 +391,52 @@ function Home() {
           <div className="row">
             <div className="search-form__input-wrap">
               <label className="search-form__label" htmlFor="seats-adult">
-                Seats
+                <strong>Seats</strong>
               </label>
-              <div className="row">
-                <input
-                  className="search-form__input number"
-                  id="seats-adult"
-                  title="adult"
-                  type="number"
-                  value={neededSeats.adult}
-                  min="1"
-                  onChange={({ target }) =>
-                    setNeededSeats((prev) => ({
-                      ...prev,
-                      adult: Number(target.value),
-                    }))
-                  }
-                />
-                <input
-                  className="search-form__input number"
-                  id="seats-child"
-                  title="child"
-                  type="number"
-                  value={neededSeats.child}
-                  min="0"
-                  onChange={({ target }) =>
-                    setNeededSeats((prev) => ({
-                      ...prev,
-                      child: Number(target.value),
-                    }))
-                  }
-                />
+              <div className="row" style={{ flexDirection: "column" }}>
+                <div className="row">
+                  <p>Adult:</p>
+                  <input
+                    className="search-form__input number"
+                    id="seats-adult"
+                    title="adult"
+                    type="number"
+                    value={neededSeats.adult}
+                    min="1"
+                    onChange={({ target }) =>
+                      setNeededSeats((prev) => ({
+                        ...prev,
+                        adult: Number(target.value),
+                      }))
+                    }
+                  />
+                </div>
+                <div
+                  className="row"
+                  style={{ marginLeft: "0", marginTop: "6px" }}
+                >
+                  <p>Child:</p>
+                  <input
+                    className="search-form__input number"
+                    id="seats-child"
+                    title="child"
+                    type="number"
+                    value={neededSeats.child}
+                    min="0"
+                    onChange={({ target }) =>
+                      setNeededSeats((prev) => ({
+                        ...prev,
+                        child: Number(target.value),
+                      }))
+                    }
+                  />
+                </div>
               </div>
             </div>
 
             <div className="search-form__input-wrap">
               <label className="search-form__label" htmlFor="select-class">
-                Class
+                <strong>Class</strong>
               </label>
               <div className="row">
                 <select
@@ -450,7 +463,7 @@ function Home() {
               type="submit"
               disabled={!isValid}
             >
-              Seach
+              Search
             </button>
             {userData?.role === ADMIN ? (
               <button

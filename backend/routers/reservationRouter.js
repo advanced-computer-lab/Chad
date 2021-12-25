@@ -207,8 +207,9 @@ router.delete('/reservation/:reservationId', async (req, res) => {
       );
     }
 
+    let totalPrice;
     if (reservation) {
-      let totalPrice = reservation.tickets.reduce(
+      totalPrice = reservation.tickets.reduce(
         (acc, { price }) => acc + price,
         0
       );
@@ -223,7 +224,7 @@ router.delete('/reservation/:reservationId', async (req, res) => {
     await sendMail(
       email,
       'Reservation Cancelled',
-      'your reservation have been cancelled'
+      `your reservation have been cancelled and all the payments ${totalPrice} $have been refunded`
     );
 
     res.status(200).json({

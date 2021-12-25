@@ -113,13 +113,13 @@ router.delete('/ticket/:ticketId', async (req, res) => {
     const { flightNumber, price, paymentId } = await Ticket.findById(_id);
     let { email } = await User.findOne({ _id: req.userData.id });
 
-    await makeRefund(price, paymentId);
+    if (paymentId) await makeRefund(price, paymentId);
     let deletedTicket = await Ticket.deleteTicket(_id);
 
     await sendMail(
       email,
       'flight ticket Canceled',
-      `You canceled the tickets of the flight ${flightNumber}`
+      `You canceled the tickets of the flight ${flightNumber} and the payment ${price} $ has been refunded`
     );
 
     res.status(200).json({

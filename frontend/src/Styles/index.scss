@@ -79,17 +79,26 @@ p.t404 {
   color: #464353;
 }
 
+.img-1,
+.img-2,
+.img-3,
+.img-4 {
+  background-position: center center !important;
+  background-repeat: no-repeat;
+  background-size: cover !important;
+}
+
 .img-1 {
-  background: url("../Assets/below-avg-pro.jpg");
+  background-image: url("../Assets/below-avg-pro.jpg");
 }
 .img-2 {
-  background: url("../Assets/avg-pro.jpg");
+  background-image: url("../Assets/avg-pro.jpg");
 }
 .img-3 {
-  background: url("../Assets/chad.jpeg");
+  background-image: url("../Assets/chad.jpeg");
 }
 .img-4 {
-  background: url("../Assets/ult-enjoyer.jpg");
+  background-image: url("../Assets/ult-enjoyer.jpg");
 }
 
 .back-btn {
