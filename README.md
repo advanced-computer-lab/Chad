@@ -29,7 +29,7 @@
 - [Sprint 3 Tasks distribution & progress](SPRINT3.md)
 
 ## Motivation
-This project is an academic one, and the main purpose of implementing it is to get familier with the __MERN STACK__ , the __AGILE Methodology__ , __GITHUB WORK FLOW__ and ofcourse to pass this CSEN704 GUC course 🙂.  
+This project is an academic one, and the main purpose of implementing it is to get familier with the __MERN STACK__ , the __AGILE Methodology__ , __GITHUB WORK FLOW__ and of course to pass this CSEN704 GUC course 🙂.  
 
 ## Build Status
 currently the project is in the staging process, and it is being tested intensively.
