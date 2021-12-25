@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { loginReq } from "../APIs/AuthAPIs";
 import { saveSession } from "../Utils/SessionUtils";
-import { useHistory } from "react-router";
+import { useHistory, Link } from "react-router-dom";
 import UserContext from "../Context/UserContext";
 import ToastContext from "../Context/ToastContext";
 import Journey from "../Assets/journey.svg";
@@ -21,15 +21,15 @@ function Login() {
 
   const history = useHistory();
 
-  const isValid = email && password;
+  const isValid = email.trim() && password.trim();
 
   const onSubmit = async (event) => {
     event.preventDefault();
 
     try {
       let res = await loginReq({
-        email,
-        password,
+        email: email.trim(),
+        password: password.trim(),
       });
 
       if (res.status !== 200) {
@@ -43,7 +43,6 @@ function Login() {
       let jsonData = await res.json();
 
       if (!jsonData.success) {
-        console.log(jsonData);
         addToasts({
           body: "invalid usermail or password",
           type: "danger",
@@ -121,8 +120,11 @@ function Login() {
               className="clickable login-form__btn"
               onClick={() => history.push("/register")}
             >
-              Rgister
+              Register
             </button>
+          </div>
+          <div className="row">
+            <Link to="/forgot-password">forgot your password?</Link>
           </div>
         </div>
       </form>

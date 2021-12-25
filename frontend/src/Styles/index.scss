@@ -68,3 +68,13 @@ button {
   text-decoration: none;
   color: inherit;
 }
+
+p.t404 {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: 900;
+  font-size: 70px;
+  color: #464353;
+}

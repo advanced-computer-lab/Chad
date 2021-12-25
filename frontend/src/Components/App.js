@@ -24,6 +24,7 @@ import "../Styles/Components/Overlay.scss";
 import ProtectedRoute from "./ProtectedRoute";
 import Profile from "../Pages/Profile";
 import error404 from "../Assets/404.svg";
+import ForgotPassword from "../Pages/ForgotPassword";
 
 function App() {
   const [userData, setUserData] = useState({});
@@ -152,6 +153,9 @@ function App() {
                     <Route path="/register">
                       <Register />
                     </Route>
+                    <Route path="/forgot-password">
+                      <ForgotPassword />
+                    </Route>
                     <ProtectedRoute path="/profile">
                       <Profile />
                     </ProtectedRoute>
@@ -173,6 +177,7 @@ function App() {
                           transform: "translate(-50%, -50%)",
                         }}
                       />
+                      <p className="t404">404</p>
                     </Route>
                   </Switch>
                 </>

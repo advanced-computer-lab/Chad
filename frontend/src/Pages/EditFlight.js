@@ -14,7 +14,6 @@ function EditFlight() {
   const {
     state: { flight },
   } = useLocation();
-  console.log(flight);
   const history = useHistory();
   const { userData } = useContext(UserContext);
   const { addToasts } = useContext(ToastContext);
@@ -83,7 +82,6 @@ function EditFlight() {
           body: "edit flight faild",
         });
         setLoading(false);
-        console.log("error", await res.json());
         return;
       }
 

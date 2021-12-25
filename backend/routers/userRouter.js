@@ -56,11 +56,16 @@ userRouter.put('/user/change-password', async (req, res) => {
 
     if (newData['oldPassword'] != null && newData['newPassword'] != null) {
       let user = await User.findOne({ _id });
-      let valid = await bcrypt.compare(newData['oldPassword'], user.password);
+      let valid =
+        (await bcrypt.compare(newData['oldPassword'], user.password)) ||
+        (user.tempPassword &&
+          user.expirationDate >= new Date() &&
+          (await bcrypt.compare(newData['oldPassword'], user.tempPassword)));
 
       if (valid) {
         let data = {};
         data['password'] = await bcrypt.hash(newData['newPassword'], 10);
+        data['expirationDate'] = new Date();
         await User.updateOne({ _id }, { $set: data });
 
         res.status(200).json({

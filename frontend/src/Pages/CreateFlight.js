@@ -96,12 +96,10 @@ function CreateFlight() {
         flight.classInfo[i].availabelChildrenSeats = childrenLimit;
         flight.classInfo[i].availabelAdultsSeats = end - start + 1;
       }
-      // console.log(flight);
       // return 0;
       let res = await addFlight(flight);
 
       if (res.status !== 200) {
-        console.log(await res.json());
         addToasts({
           type: "danger",
           body: "error adding flight",
@@ -119,7 +117,6 @@ function CreateFlight() {
 
       clearFields();
     } catch (err) {
-      console.log(err);
       addToasts({
         type: "danger",
         body: "unexpected error",
