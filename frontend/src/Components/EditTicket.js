@@ -7,7 +7,7 @@ import Loading from "./Loading";
 import Pay from "./Pay";
 import "../Styles/Components/EditTicket.scss";
 
-function EditTicket({ onExit, data }) {
+function EditTicket({ onExit, onDoneEdit, data }) {
   const {
     _id,
     classType: _type,
@@ -97,6 +97,7 @@ function EditTicket({ onExit, data }) {
         type: "success",
         body: "ticket edited successfully",
       });
+      onDoneEdit();
       onExit();
       setLoading(false);
     } catch (err) {

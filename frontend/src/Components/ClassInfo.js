@@ -43,8 +43,6 @@ function ClassInfo({ data, onChange }) {
   // don't render empty array
   if (info.length === 0) return <></>;
 
-  console.log(info);
-
   return (
     <>
       <div className=" class-types-list">

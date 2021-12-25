@@ -6,6 +6,7 @@ import Loading from "../Components/Loading";
 import EditTicket from "../Components/EditTicket";
 import Paging from "../Components/Paging";
 import ToastContext from "../Context/ToastContext";
+import UserLevelContext from "../Context/UserLevelContext";
 import edit from "../Assets/edit.svg";
 import "../Styles/Components/Profile.scss";
 
@@ -28,6 +29,7 @@ function Profile() {
   const [newPassword, setNewPassword] = useState("");
 
   const { addToasts } = useContext(ToastContext);
+  const { level, setLevel } = useContext(UserLevelContext);
 
   useEffect(() => {
     (async () => {
@@ -106,6 +108,16 @@ function Profile() {
       }
 
       data = await res.json();
+      setLevel(
+        `img-${
+          (data.reservations.reduce(
+            (acc, { tickets }) => acc + !!tickets.length,
+            0
+          ) %
+            4) +
+          1
+        }`
+      );
       setReservations(data.reservations);
       setMaxPage(data.maxPages);
 
@@ -215,7 +227,7 @@ function Profile() {
         <>
           <form className="row" onSubmit={handleUpdate} required>
             <div className="img-holder">
-              <div title="img holder" className="img" />
+              <div title="img holder" className={`img ${level}`} />
             </div>
             <div className="profile__info">
               <div className="row input__wrap">
@@ -402,7 +414,11 @@ function Profile() {
         </>
       )}
       {showEdit && (
-        <EditTicket onExit={() => setShowEdit(false)} data={editData} />
+        <EditTicket
+          onExit={() => setShowEdit(false)}
+          data={editData}
+          onDoneEdit={async () => await updateResr()}
+        />
       )}
     </div>
   );

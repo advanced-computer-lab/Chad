@@ -54,6 +54,25 @@
       width: 90%;
       height: 380px;
 
+      .close-btn {
+        position: absolute;
+        top: 5px;
+        right: 15px;
+        font-size: 19px;
+        background: white;
+        border: 1px dashed black;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &:hover {
+          border: 1px solid black;
+          cursor: pointer;
+        }
+      }
+
       .body {
         display: flex;
         flex-direction: column;
