@@ -3,6 +3,7 @@ import { useHistory } from "react-router";
 import { registerReq } from "../APIs/AuthAPIs";
 import ToastContext from "../Context/ToastContext";
 import airport from "../Assets/airport.svg";
+import back from "../Assets/back-arrow.svg";
 import "../Styles/Components/Register.scss";
 
 function Register() {
@@ -63,6 +64,12 @@ function Register() {
 
   return (
     <div className={`page register ${animateClass}`}>
+      <button
+        className="back-btn clickable"
+        onClick={() => history.push("/login")}
+      >
+        <img className="btn__icon" src={back} alt="back arrrow" />
+      </button>
       <img src={airport} alt="airport" />
       <form className="reg-form" onSubmit={onSubmit}>
         <div className="reg-form__content">

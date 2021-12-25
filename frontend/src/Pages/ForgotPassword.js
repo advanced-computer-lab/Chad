@@ -4,6 +4,7 @@ import { sendTmpPassword } from "../APIs/ForgotAPI";
 import Loading from "../Components/Loading";
 import ToastContext from "../Context/ToastContext";
 import find from "../Assets/find-fp.svg";
+import back from "../Assets/back-arrow.svg";
 import "../Styles/Components/ForgotPassword.scss";
 
 function ForgotPassword() {
@@ -51,6 +52,12 @@ function ForgotPassword() {
 
   return (
     <div className={`page forgot ${animateClass}`}>
+      <button
+        className="back-btn clickable"
+        onClick={() => history.push("/login")}
+      >
+        <img className="btn__icon" src={back} alt="back arrrow" />
+      </button>
       <img src={find} alt="find user" />
       <form className="forgot-form" onSubmit={handleSubmit}>
         {loading && <Loading />}

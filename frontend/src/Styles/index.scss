@@ -78,3 +78,37 @@ p.t404 {
   font-size: 70px;
   color: #464353;
 }
+
+.img-1 {
+  background: url("../Assets/below-avg-pro.jpg");
+}
+.img-2 {
+  background: url("../Assets/avg-pro.jpg");
+}
+.img-3 {
+  background: url("../Assets/chad.jpeg");
+}
+.img-4 {
+  background: url("../Assets/ult-enjoyer.jpg");
+}
+
+.back-btn {
+  position: fixed;
+  top: 10px;
+  left: 20px;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+
+  img.btn__icon {
+    position: static !important;
+    width: 45px !important;
+    height: 45px;
+    animation: none !important ;
+  }
+}

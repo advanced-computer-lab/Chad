@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { Link, useLocation, useHistory } from "react-router-dom";
 import { ADMIN } from "../Constants/UserEnums";
 import { clearSession } from "../Utils/SessionUtils";
+import UserLevelContext from "../Context/UserLevelContext";
 import UserContext from "../Context/UserContext";
 import "../Styles/Components/AppBar.scss";
 
@@ -10,6 +11,7 @@ function AppBar() {
   const history = useHistory();
   const [visible, setVisible] = useState(false);
   const { userData, setUserData } = useContext(UserContext);
+  const { level } = useContext(UserLevelContext);
 
   // some flags for conditional rendering
   const isAuth = !!userData._id;
@@ -23,7 +25,6 @@ function AppBar() {
     history.push("/");
   };
 
-  console.log(location.pathname);
   // hide from login and signup;
   if (
     ["/login", "/register", "/forgot-password"].some(
@@ -72,7 +73,7 @@ function AppBar() {
         {isAuth && (
           <div className="app-bar__profile">
             <button
-              className="profile-btn clickable"
+              className={`profile-btn clickable ${level}`}
               title="profile"
               onClick={() => setVisible((prev) => !prev)}
             />
