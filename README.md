@@ -19,7 +19,7 @@
 - [Features](#features)
 - [Api Reference](#api-reference)
 - [Tests](#tests)
-- [How To Use ?](#how-to-use-?)
+- [How To Use ?](#how-to-use-)
 - [Init the dev enviroment](#init-the-enviroment)
 - [Add env files](#add-env-files)
 - [Important Notes for Development](#important-notes)
